@@ -139,6 +139,17 @@ app_license = "mit"
 # 		"on_trash": "method"
 # 	}
 # }
+doc_events = {
+    "Quotation": {
+        "on_submit": "dms.dms.doctype.quotation_planning.quotation_planning.generate_monthly_plan",
+        "on_update": "dms.dms.doctype.quotation_planning.quotation_planning.generate_monthly_plan"
+    },
+    "Sales Order": {
+
+        "on_submit": "dms.dms.doctype.quotation_planning.quotation_planning.update_actual_amount_from_sales_order",
+
+    }
+}
 
 # Scheduled Tasks
 # ---------------
