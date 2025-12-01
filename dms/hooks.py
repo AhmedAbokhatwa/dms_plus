@@ -256,3 +256,19 @@ doc_events = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 
+fixtures = [
+    {
+        "dt": "Print Format",
+        "filters": [
+            ["module", "=", "dms"],
+            ["disable", "=", 0],
+        ]
+    },
+    {
+        "dt": "Report",
+        "filters": [
+            ["module", "=", "dms"],
+            ["disable", "=", 0],
+        ]
+    }
+]
