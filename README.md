@@ -1,5 +1,7 @@
 ### dms
-![dms_plus logo](dms.png)
+<div align="center">
+  <img src="dms.png" alt="dms_plus logo" width="150">
+</div>
 
 # dms_plus
 ...
