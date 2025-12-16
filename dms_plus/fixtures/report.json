@@ -1,0 +1,52 @@
+[
+ {
+  "add_total_row": 0,
+  "add_translate_data": 0,
+  "columns": [],
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2025-11-08 20:18:08.491913",
+  "module": "dms_plus",
+  "name": "Pipeline Quotation Report",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Quotation",
+  "reference_report": null,
+  "report_name": "Pipeline Quotation Report",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Pipeline Quotation Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Sales User"
+   },
+   {
+    "parent": "Pipeline Quotation Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Sales Manager"
+   },
+   {
+    "parent": "Pipeline Quotation Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Maintenance Manager"
+   },
+   {
+    "parent": "Pipeline Quotation Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Maintenance User"
+   }
+  ],
+  "timeout": 0
+ }
+]

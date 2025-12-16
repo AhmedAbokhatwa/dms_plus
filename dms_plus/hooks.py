@@ -261,14 +261,20 @@ fixtures = [
         "dt": "Print Format",
         "filters": [
             ["module", "=", "dms_plus"],
-            ["disable", "=", 0],
+            ["disabled", "=", 0],
         ]
     },
     {
         "dt": "Report",
         "filters": [
             ["module", "=", "dms_plus"],
-            ["disable", "=", 0],
+            ["disabled", "=", 0],
+        ]
+    },
+    {
+        "dt": "Custom Field",
+        "filters":[
+                ["module", "=", "dms_plus"],
         ]
     }
 ]
