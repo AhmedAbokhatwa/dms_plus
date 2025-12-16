@@ -276,5 +276,11 @@ fixtures = [
         "filters":[
                 ["module", "=", "dms_plus"],
         ]
+    },
+     {
+        "dt": "Workspace",
+        "filters":[
+                ["module", "=", "dms_plus"],
+        ]
     }
 ]
