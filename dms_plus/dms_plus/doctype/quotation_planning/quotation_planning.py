@@ -31,8 +31,9 @@ def generate_monthly_plan(doc, method):
             "year": year,
             "planned_amount": item.amount,
             "actual_amount": 0,
-            "product_manager": doc.owner,  # أو doc.sales_person لو عندك حقل
+            "product_manager": doc.custom_product_manager,  # أو doc.sales_person لو عندك حقل
             "company": doc.company,
+            "sales_persons": doc.owner,
             "territory": doc.territory
         }).insert(ignore_permissions=True)
 
