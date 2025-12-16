@@ -1,11 +1,16 @@
-### dms
 <div align="center">
-  <img src="dms.png" alt="dms_plus logo" width="150">
+  <img src="dms.png" alt="dms_plus logo" width="250">
 </div>
 
-# dms_plus
-...
-dms_plus
+<div align="center">
+
+# DMS Plus
+
+A modern App For Digital Myth Solutions
+
+</div>
+
+---
 
 ### Installation
 
@@ -35,4 +40,4 @@ Pre-commit is configured to use the following tools for checking and formatting 
 
 ### License
 
-mit
+MIT
