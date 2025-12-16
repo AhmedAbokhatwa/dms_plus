@@ -1,0 +1,28 @@
+{
+    "add_total_row": 0,
+    "add_translate_data": 0,
+    "columns": [],
+    "creation": "2025-11-01 17:12:33.242330",
+    "disabled": 1,
+    "docstatus": 0,
+    "doctype": "Report",
+    "filters": [],
+    "idx": 0,
+    "is_standard": "Yes",
+    "letterhead": null,
+    "modified": "2025-12-01 14:17:10.668037",
+    "modified_by": "Administrator",
+    "module": "dms_plus",
+    "name": "Pipeline Report",
+    "owner": "Administrator",
+    "prepared_report": 0,
+    "ref_doctype": "Quotation",
+    "report_name": "Pipeline Report",
+    "report_type": "Script Report",
+    "roles": [
+        {
+            "role": "Website Manager"
+        }
+    ],
+    "timeout": 0
+}

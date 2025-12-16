@@ -1,0 +1,132 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "autoname": "QMP-.YYYY.-.MM.-.###  ",
+    "creation": "2025-11-08 15:26:46.634226",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "quotation",
+        "quotation_item",
+        "customer",
+        "product_manager",
+        "territory",
+        "company",
+        "column_break_qnpj",
+        "month",
+        "year",
+        "actual_amount",
+        "planned_amount",
+        "status",
+        "sales_persons"
+    ],
+    "fields": [
+        {
+            "fieldname": "quotation",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Quotation",
+            "options": "Quotation"
+        },
+        {
+            "fieldname": "quotation_item",
+            "fieldtype": "Link",
+            "label": "Quotation Item",
+            "options": "Item"
+        },
+        {
+            "fieldname": "month",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Month"
+        },
+        {
+            "fieldname": "planned_amount",
+            "fieldtype": "Currency",
+            "label": "Planned Amount"
+        },
+        {
+            "fieldname": "actual_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "Actual Amount"
+        },
+        {
+            "fieldname": "product_manager",
+            "fieldtype": "Link",
+            "label": "Product Manager",
+            "options": "User"
+        },
+        {
+            "fieldname": "territory",
+            "fieldtype": "Link",
+            "label": "Territory",
+            "options": "Territory"
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "Company",
+            "options": "Company"
+        },
+        {
+            "fieldname": "year",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "year"
+        },
+        {
+            "fieldname": "customer",
+            "fieldtype": "Link",
+            "label": "Customer",
+            "options": "Customer"
+        },
+        {
+            "fieldname": "column_break_qnpj",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "status",
+            "options": "Planned\nPartially Achieved\nAchieved\nOver Achieved"
+        },
+        {
+            "fieldname": "sales_persons",
+            "fieldtype": "Data",
+            "label": "Sales Persons"
+        }
+    ],
+    "grid_page_length": 50,
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2025-11-08 21:07:59.968609",
+    "modified_by": "Administrator",
+    "module": "dms_plus",
+    "name": "Quotation Monthly Plan",
+    "naming_rule": "Expression (old style)",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "row_format": "Dynamic",
+    "rows_threshold_for_grid_search": 20,
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": []
+}

@@ -1,0 +1,592 @@
+<style>
+    /* ========== Reset & General ========== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        direction: ltr;
+        background: #f5f5f5;
+    }
+
+    .print-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    /* ========== Header Table ========== */
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        border-bottom: 3px solid #118394;
+    }
+
+    .header-table td {
+        border: none;
+        padding: 20px;
+        vertical-align: middle;
+    }
+
+    .company-cell {
+        width: 50%;
+        text-align: right;
+    }
+
+    .company-info h2 {
+        font-size: 32px;
+        color: #2d5a7b;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .company-info p {
+        color: #118394;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .invoice-stamp-cell {
+        width: 50%;
+        text-align: center;
+        padding: 20px !important;
+    }
+
+    .invoice-stamp {
+        background: linear-gradient(135deg, #118394 0%, #0a4f5f 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(17, 131, 148, 0.3);
+    }
+
+    .invoice-stamp h1 {
+        font-size: 52px;
+        margin: 0;
+        font-weight: 900;
+        letter-spacing: 2px;
+    }
+
+    .invoice-stamp p {
+        font-size: 11px;
+        opacity: 0.9;
+        margin-top: 5px;
+    }
+
+    /* ========== Document Info Table ========== */
+    .doc-title-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 25px;
+    }
+
+    .doc-title-table td {
+        background: linear-gradient(90deg, #118394 0%, #0a4f5f 100%);
+        color: white;
+        padding: 18px 25px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .doc-title-table td:first-child {
+        width: 50%;
+        border-radius: 8px 0 0 8px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .doc-title-table td:last-child {
+        width: 50%;
+        border-radius: 0 8px 8px 0;
+    }
+
+    /* ========== Customer & Delivery Table ========== */
+    .customer-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 35px;
+
+
+
+    }
+
+    .customer-table td {
+        width: 50%;
+        background: linear-gradient(135deg, #2e3a43 0%, #1a2834 100%);
+        color: #118394;
+        padding: 25px;
+        border: 4px solid #118394;
+        vertical-align: top;
+        border-left: 4px solid #118394;
+        border-radius: 10px;
+    }
+
+    .customer-table td:first-child {
+        border-radius: 10px 0 0 10px;
+    }
+
+    .customer-table td:last-child {
+        border-radius: 0 10px 10px 0;
+        border-left: none;
+        border-right: 4px solid #118394;
+    }
+
+    .customer-table h3 {
+        color: black;
+        font-size: 15px;
+        font-weight: 700;
+        border-bottom: 2px solid #118394;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+        letter-spacing: 0.3px;
+    }
+
+    .customer-table [data-fieldtype] {
+        margin-bottom: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .customer-table strong {
+        display: block;
+        color: black;
+        font-weight: 600;
+        margin-bottom: 4px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .customer-table .value {
+        color: black;
+        font-weight: 500;
+    }
+
+    /* ========== Items Table ========== */
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 35px 0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background-color: #118394;
+        text-align: left;
+    }
+
+    .items-table thead {
+        background: linear-gradient(90deg, #118394 0%, #0a4f5f 100%);
+    }
+
+    .items-table th {
+        color: white;
+        padding: 16px 12px;
+        font-weight: 700;
+        text-align: right;
+        font-size: 13px;
+        border: none;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+
+    .items-table th:first-child {
+        text-align: center;
+        width: 6%;
+    }
+
+    .items-table tbody tr {
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+    .items-table tbody tr:nth-child(odd) {
+        background: #ffffff;
+    }
+
+    .items-table tbody tr:nth-child(even) {
+        background: #f8fbfd;
+    }
+
+    .items-table tbody tr:last-child {
+        border-bottom: 2px solid #118394;
+    }
+
+    .items-table td {
+        padding: 14px 12px;
+        font-size: 13px;
+        color: #333;
+        text-align: right;
+        border: none;
+        vertical-align: middle;
+    }
+
+    .items-table td:first-child {
+        text-align: center;
+        font-weight: 700;
+        color: #118394;
+        background: rgba(17, 131, 148, 0.05);
+        width: 6%;
+    }
+
+    /* ========== Totals Table ========== */
+    .totals-table {
+        width: 380px;
+        margin-left: auto;
+        margin-right: 0;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        border-collapse: collapse;
+    }
+
+    .totals-table td {
+        border: none;
+        padding: 12px 0;
+        font-size: 13px;
+        border-bottom: 1px solid #ddeef5;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .totals-table td:first-child {
+        text-align: right;
+        font-weight: 600;
+        color: #2d5a7b;
+        width: 50%;
+    }
+
+    .totals-table td:last-child {
+        text-align: left;
+        font-weight: 700;
+        color: #118394;
+        font-size: 14px;
+    }
+
+    .totals-table tr.final td {
+        background: linear-gradient(90deg, #118394 0%, #0a4f5f 100%);
+        color: white;
+        padding: 15px;
+        border: none;
+        font-weight: 700;
+        font-size: 15px;
+        border-radius: 6px;
+    }
+
+    .totals-table tr.final td:first-child {
+        color: white;
+        font-weight: 700;
+    }
+
+    .totals-table tr.final td:last-child {
+        color: white;
+    }
+
+    /* ========== Notes Table ========== */
+    .notes-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+    }
+
+    .notes-table td {
+        background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+        padding: 20px;
+        border: 1px solid #ffe082;
+        border-left: 4px solid #ffc107;
+        border-radius: 6px;
+    }
+
+    .notes-table h4 {
+        margin: 0 0 10px 0;
+        color: #f57f17;
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+    }
+
+    .notes-table p {
+        color: #666;
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* ========== Signature Table ========== */
+    .signature-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 60px;
+        margin-bottom: 60px;
+    }
+
+    .signature-table td {
+        width: 33.33%;
+        text-align: center;
+        padding: 40px 20px 0 20px;
+        border-top: 2px solid #333;
+        font-size: 12px;
+        color: #666;
+        font-weight: 600;
+        border: none;
+    }
+
+    /* ========== Footer Table ========== */
+    .footer-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 3px dashed #118394;
+    }
+
+    .footer-table td {
+        width: 33.33%;
+        background: linear-gradient(135deg, #f8fbfd 0%, #eff8fa 100%);
+        padding: 20px 25px;
+        font-size: 11px;
+        border: none;
+        border-right: 1px solid #ddeef5;
+        vertical-align: top;
+    }
+
+    .footer-table td:last-child {
+        border-right: none;
+    }
+
+    .footer-table h5 {
+        margin: 0 0 12px 0;
+        color: #118394;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .footer-table p {
+        margin: 6px 0;
+        line-height: 1.7;
+        color: #555;
+    }
+
+    /* ========== Print Styles ========== */
+    @media print {
+        body {
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .print-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        table {
+            page-break-inside: avoid;
+        }
+    }
+</style>
+
+<div class="print-container">
+
+    <!-- Header Table -->
+    <table class="header-table">
+        <tr>
+            <td class="company-cell">
+                <div class="company-info">
+                    <h2>{{ doc.company }}</h2>
+                    <p>Digital Myth Solution</p>
+                </div>
+            </td>
+            <td class="invoice-stamp-cell">
+                <div class="invoice-stamp">
+                    <h1>INVOICE</h1>
+                    <p>Official Document</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Document Info Table -->
+    <table class="doc-title-table">
+        <tr>
+            <td>📄 Invoice No. {{ doc.name }}</td>
+            <td>📅 Date: {{ doc.get_formatted("posting_date") }}</td>
+        </tr>
+    </table>
+
+    <!-- Customer & Delivery Table -->
+    <table class="customer-table">
+        <tr>
+            <td>
+                <h3>👤 Customer Data</h3>
+
+                <div data-fieldtype="Data" data-fieldname="customer_name">
+                    <strong>Customer Name: </strong>
+                    <div class="value">{{ doc.customer_name }}</div>
+                </div>
+
+                {% if doc.contact_mobile %}
+                <div data-fieldtype="Data" data-fieldname="contact_mobile">
+                    <strong>Phone</strong>
+                    <div class="value">{{ doc.contact_mobile }}</div>
+                </div>
+                {% endif %}
+
+                {% if doc.contact_email %}
+                <div data-fieldtype="Data" data-fieldname="contact_email">
+                    <strong>Email</strong>
+                    <div class="value">{{ doc.contact_email }}</div>
+                </div>
+                {% else %}
+                <div data-fieldtype="Data" data-fieldname="email">
+                    <strong>Email</strong>
+                    <div class="value">{{ doc.customer_name }}@gmail.com</div>
+                </div>
+                {% endif %}
+            </td>
+            <td>
+                <h3>📍 Delivery Location</h3>
+
+                {% if doc.shipping_address_name %}
+                <div data-fieldtype="Link" data-fieldname="shipping_address_name">
+                    <strong>Address</strong>
+                    <div class="value">{{ doc.shipping_address_name }}</div>
+                </div>
+                {% else %}
+                <div>
+                    <strong>Address</strong>
+                    <div class="value" style="color: #a8c5d1;">Not Specified</div>
+                </div>
+                {% endif %}
+
+                {% if doc.customer_address %}
+                <div data-fieldtype="Data" data-fieldname="customer_address">
+                    <strong>Details</strong>
+                    <div class="value">{{ doc.customer_address }}</div>
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Items Table -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Item Name</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Discount</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in doc.items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td data-fieldtype="Data"><strong>{{ item.item_name }}</strong></td>
+                <td data-fieldtype="Data" style="color: #999; font-size: 12px;">{{ item.description or '—' }}</td>
+                <td data-fieldtype="Float" style="text-align: center;">
+                    <span class="value">{{ item.qty }} {{ item.uom or item.stock_uom }}</span>
+                </td>
+                <td data-fieldtype="Currency" style="text-align: right;">
+                    <span class="value">{{ item.get_formatted("rate", doc) }}</span>
+                </td>
+                <td data-fieldtype="Currency" style="text-align: right;">
+                    {% if item.discount_amount %}
+                    <span class="value">{{ item.get_formatted("discount_amount", doc) }}</span>
+                    {% else %}
+                    <span class="value" style="color: #999;">—</span>
+                    {% endif %}
+                </td>
+                <td data-fieldtype="Currency" style="text-align: right; font-weight: 700; color: #118394;">
+                    <span class="value">{{ item.get_formatted("amount", doc) }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Totals Table -->
+    <table class="totals-table">
+        <tr>
+            <td>Subtotal</td>
+            <td>{{ doc.get_formatted("net_total") }}</td>
+        </tr>
+        {% if doc.discount_amount %}
+        <tr>
+            <td>Discount</td>
+            <td style="color: #d32f2f;">-{{ doc.get_formatted("discount_amount") }}</td>
+        </tr>
+        {% endif %}
+        {% if doc.total_taxes_and_charges %}
+        <tr>
+            <td>Taxes & Charges</td>
+            <td>{{ doc.get_formatted("total_taxes_and_charges") }}</td>
+        </tr>
+        {% endif %}
+        <tr class="final">
+            <td>TOTAL</td>
+            <td>{{ doc.get_formatted("grand_total") }}</td>
+        </tr>
+    </table>
+
+    <!-- Notes Table -->
+    {% if doc.remarks %}
+    <table class="notes-table">
+        <tr>
+            <td>
+                <h4>📝 Notes & Remarks</h4>
+                <p>{{ doc.remarks }}</p>
+            </td>
+        </tr>
+    </table>
+    {% endif %}
+
+    <!-- Signature Table -->
+    <table class="signature-table">
+        <tr>
+            <td style="border-top: 2px solid #333; padding-top: 40px;">Customer Signature</td>
+            <td style="border-top: 2px solid #333; padding-top: 40px;">Sales Rep</td>
+            <td style="border-top: 2px solid #333; padding-top: 40px;">Authorized</td>
+        </tr>
+    </table>
+
+    <!-- Footer Table -->
+    <table class="footer-table">
+        <tr>
+            <td>
+                <h5>📍 Address</h5>
+                {% if doc.company_address %}
+                <p>{{ doc.company_address }}</p>
+                {% else %}
+                <p>7628 Prince Naif B.Abdualaziz St.<br>Muhammadiyah, Dammam 31911<br>P.O.BOX 60527</p>
+                {% endif %}
+            </td>
+            <td>
+                <h5>📞 Contact</h5>
+                <p><strong>Tel:</strong> +013 8501 167<br><strong>Fax:</strong> +013 8561281</p>
+            </td>
+            <td>
+                <h5>📧 Digital</h5>
+                <p><strong>Email:</strong> info@dms-ksa.com<br><strong>Website:</strong> www.dms-ksa.com</p>
+            </td>
+        </tr>
+    </table>
+
+</div>
