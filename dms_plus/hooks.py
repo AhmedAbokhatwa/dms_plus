@@ -139,18 +139,6 @@ app_license = "mit"
 # 		"on_trash": "method"
 # 	}
 # }
-doc_events = {
-    "Quotation": {
-        "on_submit": "dms_plus.dms_plus.doctype.quotation_planning.quotation_planning.generate_monthly_plan",
-        "on_update": "dms_plus.dms_plus.doctype.quotation_planning.quotation_planning.generate_monthly_plan"
-    },
-    "Sales Order": {
-
-        "on_submit": "dms_plus.dms_plus.doctype.quotation_planning.quotation_planning.update_actual_amount_from_sales_order",
-
-    }
-}
-
 # Scheduled Tasks
 # ---------------
 
@@ -262,25 +250,6 @@ fixtures = [
         "filters": [
             ["module", "=", "dms_plus"],
             ["disabled", "=", 0],
-        ]
-    },
-    {
-        "dt": "Report",
-        "filters": [
-            ["module", "=", "dms_plus"],
-            ["disabled", "=", 0],
-        ]
-    },
-    {
-        "dt": "Custom Field",
-        "filters":[
-                ["module", "=", "dms_plus"],
-        ]
-    },
-     {
-        "dt": "Workspace",
-        "filters":[
-                ["module", "=", "dms_plus"],
         ]
     }
 ]
