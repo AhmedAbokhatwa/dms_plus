@@ -1,12 +1,12 @@
 <!-- Done -->
-<!-- Tax Invoice -->
+<!-- performa Invoice -->
 <div class="print-container">
     <!-- Header -->
     <div class="header">
         <div class="image-container">
             <img src="/private/files/DMS-Header.jpg.png" alt="">
         </div>
-        <h1>TAX INVOICE</h1>
+        <h1>PROFORMA INVOICE</h1>
 
         <!-- Invoice Info -->
         <div class="invoice-info">
@@ -103,25 +103,25 @@
                 {% for item in doc.items %}
                 <tr>
                     <td>{{ item.item_name }}</td>
-                    <td style="width: 100%; height:100%; font-size:10px">{{ item.description }}</td>
+                    <td style="width: 100%; height:100%; font-size:10px;">{{ item.description }}</td>
                     <td>{{ item.qty }}</td>
-                    <td>{{ "%.2f"|format(item.rate)}} {{doc.currency}}</td>
+                    <td>{{ "%.2f"|format(item.rate) }} {{doc.currency}}</td>
                     <td>
                         {% if item.discount_amount %}
-                        {{ "%.2f"|format((item.discount_amount / (item.rate * item.qty)) * 100) }}%
+                        {{ frappe.utils.fmt_money((item.discount_amount / (item.rate * item.qty)) * 100)+ '%' }}
                         {% else %}
-                        0%
+                        {{'0' + '%'}}
                         {% endif %}
                     </td>
                     <td>
                         {% if item.discount_amount %}
                         {{ "%.2f"|format(item.discount_amount) }}
                         {% else %}
-                        0.00
+                        {{"0.00"}}
                         {{doc.currency}}
                         {% endif %}
                     </td>
-                    <td>{{ "%.2f"|format(item.amount) }} {{doc.currency}}</td>
+                    <td>{{ "%.2f"|format(item.amount)}} {{doc.currency}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -250,7 +250,7 @@
     .national-address .address-text {
         direction: ltr;
         margin: 0;
-        font-size: 13px;
+        font-size: 10px;
         color: #444;
     }
 
@@ -285,7 +285,7 @@
     .supplier-details div,
     .customer-details div {
         margin-bottom: 5px;
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .customer-details .invoice-number {
@@ -320,16 +320,17 @@
     }
 
     table td {
-        font-size: 12px;
+        font-size: 13px;
         color: #333;
     }
 
     .totals-section {
-        direction: ltr;
+        direction: rtl;
         text-align: right;
-        padding: 10px 20px;
+        padding: 0px 20px;
         width: 90%;
         margin: 0px auto;
+        line-height: 1.2;
     }
 
     .totals .total-row {
@@ -421,7 +422,7 @@
         .totals-section {
             page-break-inside: avoid;
             page-break-before: auto;
-            padding: 10px 20px;
+            padding: 0px 20px;
         }
 
         .footer {
