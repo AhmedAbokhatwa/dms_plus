@@ -1,0 +1,496 @@
+<div class="page-break">
+    <div class="print-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="image-container">
+                <img src="/private/files/DMS-Header.jpg.png" alt="">
+            </div>
+            <h1>Quotation</h1>
+            <!-- Quotation Info -->
+            <div class="quotation-info">
+                <div class="supplier-section">
+                    <h3>Supplier</h3>
+                    <div class="supplier-details">
+                        <div>Company Name: {{ doc.company }}</div>
+                        {% set company_doc = frappe.get_doc("Company", doc.company) %}
+                        <div>C.R: {{ company_doc.custom_company_registration or "No C.R" }}</div>
+                        <div>Tax ID: {{ company_doc.tax_id or "-" }}</div>
+                        {% set company_links = frappe.get_all(
+                        "Dynamic Link",
+                        filters={
+                        "link_doctype": "Company",
+                        "link_name": doc.company
+                        },
+                        fields=["parent"]
+                        ) %}
+
+                        {% if company_links %}
+                        {% set company_address = frappe.get_doc("Address", company_links[0].parent) %}
+                        <div class="national-address">
+                            <h6 class="title">National Address</h6>
+                            <p class="address-text">
+                                Address: {{ company_address.address_line1 or "" }}<br>
+                                Address: {{ company_address.address_line2 or "" }}<br>
+                                City: {{ company_address.city or "" }}<br>
+                                Country: {{ company_address.country or "" }}<br>
+                                Postal Code: {{ company_address.pincode or "" }}
+                            </p>
+                        </div>
+                        {% else %}
+                        <div>
+                            <h6>National Address: -</h6>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="customer-section">
+                    <h3>Customer</h3>
+                    <div class="customer-details">
+                        <div>Company Name: {{ doc.customer_name or " " }}</div>
+                        <div>C.R: {{ doc.custom_commercial_registration or "No C.R" }}</div>
+                        <div>Tax ID: {{ doc.custom_buyer_id or "No VAT No" }}</div>
+                        {% set links = frappe.get_all(
+                        "Dynamic Link",
+                        filters={
+                        "link_doctype": "Customer",
+                        "link_name": doc.customer_name
+                        },
+                        fields=["parent"]
+                        ) %}
+                        {% if links %}
+                        {% set address = frappe.get_doc("Address", links[0].parent) or "" %}
+                        <div class="national-address">
+                            <h6 class="title"> National Address </h6>
+                            <p class="address-text">
+                                Address: {{ address.address_line1 or "" }}<br>
+                                Address: {{ address.address_line2 or "" }}<br>
+                                City: {{ address.city or "" }}<br>
+                                country: {{ address.country or "" }}<br>
+                                Postal Code : {{ address.pincode or "" }}
+                            </p>
+                        </div>
+                        {% else %}
+                        <div>
+                            <h6>National Address: -</h6>
+                        </div>
+                        {% endif %}
+                        <div class="invoice-number">Quotation Number: <small>{{doc.name}}</small></div>
+                        <div>Quotation Date: {{ doc.get_formatted("transaction_date", doc) or "-" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Discount %</th>
+                        <th>Discount Amount</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in doc.items %}
+                    <tr>
+                        <td>{{ item.item_name }}</td>
+                        <td style="width: 100%; height:100%; text-align: left;">{{ item.description }}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ "%.2f"|format(item.rate)}} {{doc.currency}}</td>
+                        <td>
+                            {% if item.discount_amount %}
+                            {{ "%.2f"|format((item.discount_amount / (item.rate * item.qty)) * 100) }}%
+                            {% else %}
+                            0%
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.discount_amount %}
+                            {{ "%.2f"|format(item.discount_amount) }}
+                            {% else %}
+                            0.00 {{doc.currency}}
+                            {% endif %}
+                        </td>
+                        <td>{{ "%.2f"|format(item.amount) }} {{doc.currency}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Totals -->
+            <div class="totals-section">
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>{{ "%.2f"|format(doc.total) }} {{doc.currency}}</span>
+                    </div>
+
+                    <div class="total-row">
+                        <span>Additional Discount:</span>
+                        {% if doc.discount_amount %}
+                        <span>{{ "%.2f"|format(doc.discount_amount) }} {{doc.currency}}</span>
+                        {% else %}
+                        <span>0.00 {{doc.currency}}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="total-row">
+                        <span>Net Total:</span>
+                        {% if doc.net_total %}
+                        <span>{{ "%.2f"|format(doc.net_total) }} {{doc.currency}}</span>
+                        {% else %}
+                        <span>0.00 {{doc.currency}}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="total-row">
+                        <span>Tax Rate %:</span>
+                        <span>
+                            {{ "%.2f"|format(
+                            (doc.total_taxes_and_charges or 0) / (doc.net_total or 1) * 100
+                            ) }}%
+                        </span>
+                    </div>
+
+                    <div class="total-row">
+                        <span>Tax Amount:</span>
+                        {% if doc.total_taxes_and_charges %}
+                        <span>{{ "%.2f"|format(doc.total_taxes_and_charges) }} {{doc.currency}}</span>
+                        {% else %}
+                        <span>0.00 {{doc.currency}}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="total-row final">
+                        <span>Grand Total:</span>
+                        <span>{{ "%.2f"|format(doc.grand_total) }} {{doc.currency}}</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total in Words:</span>
+                        <span>{{doc.in_words}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="image-container">
+                    <img src="/private/files/DMS-Footer.jpg" alt="">
+                </div>
+            </div>
+        </div>
+
+        <!-- The CSS remains the same, only remove Arabic fonts or rename if needed -->
+    </div>
+</div>
+<style>
+    @font-face {
+        font-family: 'IBM-Plex-Arabic';
+        src: url('/private/files/IBM Plex Arabic SemiBold.otf') format('opentype');
+    }
+
+    .print-format {
+        color: #171717;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 420;
+        line-height: 21px;
+        padding: 0px !important;
+        margin-left: 0mm !important;
+        margin-right: 0mm !important;
+        font-family: 'IBM-Plex-Arabic';
+    }
+
+
+    .print-format .print-container {
+        position: relative;
+        width: 100%;
+        padding: 5px;
+        padding-bottom: 150px;
+
+    }
+
+    .image-container {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .header h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .national-address {
+        direction: ltr;
+        margin-top: 6px;
+        line-height: 1.6;
+    }
+
+    .national-address .title {
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #222;
+    }
+
+    .national-address .address-text {
+        direction: ltr;
+        margin: 0;
+        font-size: 12px;
+        color: #444;
+    }
+
+    .quotation-info {
+        width: 80%;
+        margin: auto;
+        display: block;
+    }
+
+    .quotation-info h3 {
+        display: block !important;
+        margin-bottom: 10px !important;
+        color: #118493 !important;
+        border-bottom: 2px solid #000 !important;
+        font-weight: bold;
+    }
+
+    .supplier-section,
+    .customer-section {
+        width: 48%;
+        padding: 0px 10px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .supplier-section {
+        margin-right: 2%;
+    }
+
+    .supplier-details div,
+    .customer-details div {
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .customer-details .invoice-number {
+        white-space: nowrap;
+    }
+
+    table {
+        direction: ltr;
+        width: 90%;
+        border-collapse: collapse;
+        margin: 10px auto;
+
+    }
+
+    table tr {
+        text-wrap: nowrap;
+    }
+
+    table th,
+    table td {
+        border: 1px solid #ddd;
+        text-align: right;
+        padding: 8px;
+    }
+
+    table th {
+        background-color: #f2f2f2;
+        color: #118493;
+        font-size: 12px;
+        font-weight: bold;
+        text-wrap: nowrap;
+    }
+
+    table td {
+        font-size: 12px;
+        color: #333;
+    }
+
+    .totals-section {
+        direction: ltr;
+        text-align: right;
+        padding: 0px 20px;
+        width: 90%;
+        margin: 0px auto;
+        box-sizing: border-box;
+        line-height: 1.2;
+    }
+
+    .totals .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .totals .total-row.final {
+        font-weight: bold;
+        font-size: 10px
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        left: 0;
+        right: 0;
+    }
+
+    table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f8fbfd;
+    }
+
+    table tbody tr:hover {
+        background-color: #f0f5f9;
+    }
+
+
+    @media print {
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        .print-format .print-container {
+            position: absolute;
+            width: 100%;
+            height: 93%;
+            padding: 25px;
+            margin: -12px -10px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .quotation-info {
+            width: 80%;
+            margin: auto;
+            display: block;
+        }
+
+        .quotation-info h3 {
+            display: block !important;
+            margin-bottom: 10px !important;
+            color: #118493 !important;
+            border-bottom: 2px solid #000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        table {
+            page-break-inside: auto;
+            margin: 15px auto;
+        }
+
+        table tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        table th,
+        table td {
+            border: 2px solid #ddd;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        table th {
+            text-wrap: nowrap;
+        }
+
+        .totals-section {
+            page-break-inside: avoid;
+            page-break-before: auto;
+            padding: 10px 20px;
+        }
+
+        .footer {
+            position: static;
+            margin-top: 20px;
+            page-break-inside: avoid;
+        }
+    }
+
+    @media print {
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        .print-format .print-container {
+            position: absolute;
+            width: 100%;
+            height: 93%;
+            padding: 25px;
+            margin: -12px -10px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .quotation-info {
+            width: 80%;
+            margin: auto;
+            display: block;
+        }
+
+        .quotation-info h3 {
+            display: block !important;
+            margin-bottom: 10px !important;
+            color: #118493 !important;
+            border-bottom: 2px solid #000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        table {
+            page-break-inside: auto;
+            margin: 15px auto;
+        }
+
+        table tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        table th,
+        table td {
+            border: 2px solid #ddd;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        table th {
+            text-wrap: nowrap;
+        }
+
+        .totals-section {
+            page-break-inside: avoid;
+            page-break-before: auto;
+            padding: 10px 20px;
+        }
+
+        .footer {
+            position: static;
+            margin-top: 20px;
+            page-break-inside: avoid;
+        }
+    }
+</style>

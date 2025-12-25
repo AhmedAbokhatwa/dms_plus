@@ -1,22 +1,21 @@
 <!-- Done -->
-<!-- Tax Invoice -->
 <div class="print-container">
     <!-- Header -->
     <div class="header">
         <div class="image-container">
             <img src="/private/files/DMS-Header.jpg.png" alt="">
         </div>
-        <h1>TAX INVOICE</h1>
+        <h1>عرض سعر</h1>
 
-        <!-- Invoice Info -->
-        <div class="invoice-info">
+        <!-- Quotation Info -->
+        <div class="quotation-info">
             <div class="supplier-section">
-                <h3>SELLER</h3>
+                <h3>المورد</h3>
                 <div class="supplier-details">
-                    <div>Company Name: {{ doc.company }}</div>
+                    <div>اسم الشركة: {{ doc.company }}</div>
                     {% set company_doc = frappe.get_doc("Company", doc.company) %}
-                    <div>C.R: {{ company_doc.custom_company_registration or " No C.R No." }}</div>
-                    <div>VAT NO: {{ company_doc.tax_id or " No Tax No." }}</div>
+                    <div>السجل التجاري: {{ company_doc.custom_company_registration or "-" }}</div>
+                    <div>الرقم الضريبي: {{ company_doc.tax_id or "-" }}</div>
                     {% set company_links = frappe.get_all(
                     "Dynamic Link",
                     filters={
@@ -29,29 +28,29 @@
                     {% if company_links %}
                     {% set company_address = frappe.get_doc("Address", company_links[0].parent) %}
                     <div class="national-address">
-                        <h6 class="title">National Address</h6>
+                        <h6 class="title">العنوان الوطني</h6>
                         <p class="address-text">
-                            Address: {{ company_address.address_line1 or "" }}<br>
-                            Address: {{ company_address.address_line2 or "" }}<br>
-                            City: {{ company_address.city or "" }}<br>
-                            Country: {{ company_address.country or "" }}<br>
-                            Postal Code: {{ company_address.pincode or "" }}
+                            العنوان: {{ company_address.address_line1 or "" }}<br>
+                            العنوان: {{ company_address.address_line2 or "" }}<br>
+                            المدينة: {{ company_address.city or "" }}<br>
+                            الدولة: {{ company_address.country or "" }}<br>
+                            الرقم البريدي: {{ company_address.pincode or "" }}
                         </p>
                     </div>
                     {% else %}
                     <div>
-                        <h6>National Address: -</h6>
+                        <h6>العنوان الوطني : -</h6>
                     </div>
                     {% endif %}
                 </div>
             </div>
 
             <div class="customer-section">
-                <h3>CUSTOMER</h3>
+                <h3>العميل</h3>
                 <div class="customer-details">
-                    <div>Company Name: {{ doc.customer_name or "-" }}</div>
-                    <div>C.R: {{ doc.custom_commercial_registration or "-" }}</div>
-                    <div>VAT NO: {{ doc.custom_buyer_id or "-" }}</div>
+                    <div>اسم الشركة: {{ doc.customer_name or " " }}</div>
+                    <div>السجل التجاري: {{ doc.custom_commercial_registration or " " }}</div>
+                    <div>الرقم الضريبي: {{ doc.custom_buyer_id or "No VAT Num." }}</div>
                     {% set links = frappe.get_all(
                     "Dynamic Link",
                     filters={
@@ -63,24 +62,22 @@
                     {% if links %}
                     {% set address = frappe.get_doc("Address", links[0].parent) or "" %}
                     <div class="national-address">
-                        <h6 class="title"> National Address </h6>
+                        <h6 class="title">العنوان الوطني</h6>
                         <p class="address-text">
-                            Address: {{ address.address_line1 or "" }}<br>
-                            Address: {{ address.address_line2 or "" }}<br>
-                            City: {{ address.city or "" }}<br>
-                            country: {{ address.country or "" }}<br>
-                            Postal Code : {{ address.pincode or "" }}
+                            العنوان: {{ address.address_line1 or "" }}<br>
+                            العنوان: {{ address.address_line2 or "" }}<br>
+                            المدينة: {{ address.city or "" }}<br>
+                            الدولة: {{ address.country or "" }}<br>
+                            الرقم البريدي: {{ address.pincode or "" }}
                         </p>
                     </div>
                     {% else %}
                     <div>
-                        <h6>National Address: -</h6>
+                        <h6>العنوان الوطني : -</h6>
                     </div>
                     {% endif %}
-                    <div class="invoice-number">Invoice No.: {{ doc.name }}</div>
-                    <div>Posting Date: {{ frappe.utils.formatdate(doc.posting_date) }}</div>
-                    <div class="invoice-number">Purchase Order: {{ doc.po_no }}</div>
-                    <div class="invoice-number">Purchase Order Date: {{ frappe.utils.formatdate(doc.po_date) }}</div>
+                    <div class="invoice-number">رقم عرض السعر: <small>{{doc.name}}</small></div>
+                    <div>تاريخ عرض السعر: {{ doc.get_formatted("transaction_date", doc) or "-" }}</div>
                 </div>
             </div>
         </div>
@@ -89,13 +86,13 @@
         <table>
             <thead>
                 <tr>
-                    <th>Item Name</th>
-                    <th>Description</th>
-                    <th>Quantity</th>
-                    <th>Rate</th>
-                    <th>Discount %</th>
-                    <th>Discount Amount</th>
-                    <th>Total</th>
+                    <th>اسم الصنف</th>
+                    <th>الوصف</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>نسبة الخصم</th>
+                    <th>قيمة الخصم</th>
+                    <th>الإجمالي</th>
                 </tr>
             </thead>
 
@@ -105,23 +102,22 @@
                     <td>{{ item.item_name }}</td>
                     <td style="width: 100%; height:100%; font-size:10px">{{ item.description }}</td>
                     <td>{{ item.qty }}</td>
-                    <td>{{ "%.2f"|format(item.rate)}} {{doc.currency}}</td>
+                    <td>{{ item.get_formatted("rate" , item) }}</td>
                     <td>
                         {% if item.discount_amount %}
-                        {{ "%.2f"|format((item.discount_amount / (item.rate * item.qty)) * 100) }}%
+                        {{ frappe.utils.fmt_money((item.discount_amount / (item.rate * item.qty)) * 100) + '%' }}
                         {% else %}
-                        0%
+                        {{"0" + "%"}}
                         {% endif %}
                     </td>
                     <td>
                         {% if item.discount_amount %}
-                        {{ "%.2f"|format(item.discount_amount) }}
+                        {{ item.get_formatted("discount_amount", item) }}
                         {% else %}
-                        0.00
-                        {{doc.currency}}
+                        {{"0.00"}}
                         {% endif %}
                     </td>
-                    <td>{{ "%.2f"|format(item.amount) }} {{doc.currency}}</td>
+                    <td>{{ item.get_formatted("amount", item)}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -131,53 +127,53 @@
         <div class="totals-section">
             <div class="totals">
                 <div class="total-row">
-                    <span>Total Before Tax:</span>
-                    <span>{{ "%.2f"|format(doc.total) }} {{doc.currency}}</span>
+                    <span>الإجمالي قبل الضريبة:</span>
+                    <span>{{ doc.get_formatted("total", doc)}}</span>
                 </div>
 
                 <div class="total-row">
-                    <span>Additional Discount Amount:</span>
+                    <span>قيمة الخصم الإضافي:</span>
                     {% if doc.discount_amount %}
-                    <span>{{ "%.2f"|format(doc.discount_amount) }} {{doc.currency}}</span>
+                    <span>{{ doc.get_formatted("discount_amount", doc)}}</span>
                     {% else %}
-                    <span>0.00 {{doc.currency}}</span>
+                    <span>{{"0.00"}}</span>
                     {% endif %}
                 </div>
+
                 <div class="total-row">
-                    <span>Total After Discount:</span>
+                    <span>الإجمالي بعد الخصم:</span>
                     {% if doc.net_total %}
-                    <span>{{ "%.2f"|format(doc.net_total) }} {{doc.currency}}</span>
+                    <span>{{ doc.get_formatted("net_total", doc)}}</span>
                     {% else %}
-                    <span>0.00 {{doc.currency}}</span>
+                    <span>{{"0.00"}}</span>
                     {% endif %}
                 </div>
 
-
                 <div class="total-row">
-                    <span>Tax Rate %:</span>
+                    <span>نسبة الضريبة %:</span>
                     <span>
                         {{ "%.2f"|format(
                         (doc.total_taxes_and_charges or 0) / (doc.net_total or 1) * 100
                         ) }}%
                     </span>
                 </div>
+
                 <div class="total-row">
-                    <span>Tax Amount:</span>
+                    <span>قيمة الضريبة:</span>
                     {% if doc.total_taxes_and_charges %}
-                    <span>{{ "%.2f"|format(doc.total_taxes_and_charges) }} {{doc.currency}}</span>
+                    <span>{{ doc.get_formatted("total_taxes_and_charges", doc)}}</span>
                     {% else %}
-                    <span>0.00 {{doc.currency}}</span>
+                    <span> {{"0.00"}}</span>
                     {% endif %}
                 </div>
 
-
                 <div class="total-row final">
-                    <span>Total After Tax:</span>
-                    <span>{{ "%.2f"|format(doc.grand_total) }} {{doc.currency}}</span>
+                    <span>الإجمالي بعد الضريبة:</span>
+                    <span>{{ doc.get_formatted("grand_total", doc)}}</span>
                 </div>
                 <div class="total-row final">
-                    <span>In Words:</span>
-                    <span>{{ frappe.utils.money_in_words(doc.grand_total, doc.currency) }}</span>
+                    <span>المبلغ كتابة:</span>
+                    <span>{{ _(frappe.utils.money_in_words(doc.grand_total, doc.currency)) }}</span>
                 </div>
             </div>
         </div>
@@ -236,7 +232,7 @@
     }
 
     .national-address {
-        direction: ltr;
+        direction: rtl;
         margin-top: 6px;
         line-height: 1.6;
     }
@@ -248,19 +244,20 @@
     }
 
     .national-address .address-text {
-        direction: ltr;
+        direction: rtl;
         margin: 0;
         font-size: 13px;
         color: #444;
     }
 
-    .invoice-info {
+    .quotation-info {
+        direction: rtl;
         width: 80%;
         margin: auto;
         display: block;
     }
 
-    .invoice-info h3 {
+    .quotation-info h3 {
         display: block !important;
         margin-bottom: 10px !important;
         color: #118493 !important;
@@ -274,8 +271,6 @@
         padding: 0px 10px;
         display: inline-block;
         vertical-align: top;
-        box-sizing: border-box;
-        line-height: 1.1;
     }
 
     .supplier-section {
@@ -285,7 +280,7 @@
     .supplier-details div,
     .customer-details div {
         margin-bottom: 5px;
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .customer-details .invoice-number {
@@ -293,7 +288,7 @@
     }
 
     table {
-        direction: ltr;
+        direction: rtl;
         width: 90%;
         border-collapse: collapse;
         margin: 10px auto;
@@ -320,16 +315,18 @@
     }
 
     table td {
-        font-size: 12px;
+        font-size: 13px;
         color: #333;
     }
 
     .totals-section {
-        direction: ltr;
+        direction: rtl;
         text-align: right;
-        padding: 10px 20px;
+        padding: 0px 20px;
         width: 90%;
         margin: 0px auto;
+        box-sizing: border-box;
+        line-height: 1.2;
     }
 
     .totals .total-row {
@@ -365,6 +362,7 @@
         background-color: #f0f5f9;
     }
 
+
     @media print {
         @page {
             size: A4;
@@ -381,13 +379,13 @@
             print-color-adjust: exact !important;
         }
 
-        .invoice-info {
+        .quotation-info {
             width: 80%;
             margin: auto;
             display: block;
         }
 
-        .invoice-info h3 {
+        .quotation-infoh3 {
             display: block !important;
             margin-bottom: 10px !important;
             color: #118493 !important;
@@ -398,13 +396,12 @@
 
         table {
             page-break-inside: auto;
-            margin: 15px auto;
+            margin: 5px auto;
         }
 
         table tr {
             page-break-inside: avoid;
             page-break-after: auto;
-            text-wrap: nowrap;
         }
 
         table th,
