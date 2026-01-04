@@ -450,14 +450,3 @@
 
     }
 </style>
-
-<script>
-    // إذا كنت بتستخدم Frappe
-    if (typeof frappe !== 'undefined' && frappe.ui && frappe.ui.form && frappe.ui.form.Print) {
-        document.addEventListener('DOMContentLoaded', function () {
-            // هذا بيضيف أرقام الصفحات تلقائياً
-            let pageNum = 1;
-            document.body.setAttribute('data-page-count', '1');
-        });
-    }
-</script>
