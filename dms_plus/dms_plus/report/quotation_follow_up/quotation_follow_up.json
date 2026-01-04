@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2025-12-29 16:31:36.734166",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2025-12-29 16:31:36.734166",
+ "modified_by": "Administrator",
+ "module": "dms_plus",
+ "name": "Quotation Follow-up",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Quotation",
+ "report_name": "Quotation Follow-up",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Website Manager"
+  }
+ ],
+ "timeout": 0
+}
