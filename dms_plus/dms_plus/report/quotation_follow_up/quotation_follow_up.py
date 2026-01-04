@@ -14,6 +14,12 @@ def get_columns() -> list[dict]:
     """Define report columns"""
     return [
         {
+            "label": _("Quote State"),
+            "fieldname": "quote_state",
+            "fieldtype": "Data",
+            "width": 120
+        },
+        {
             "label": _("Quotation Status"),
             "fieldname": "quotation_status",
             "fieldtype": "Data",
@@ -140,6 +146,10 @@ def get_quotation_data(filters: dict | None = None) -> list:
     where_conditions = []
     params = {}
 
+    if  filters.get("quote_state"):
+        where_conditions.append("q.workflow_state = %(quote_state)s")
+        params["quote_state"] = filters.get("quote_state")
+
     if filters.get("quotation_name"):
         where_conditions.append("q.name = %(quotation_name)s")
         params["quotation_name"] = filters.get("quotation_name")
@@ -177,6 +187,7 @@ def get_quotation_data(filters: dict | None = None) -> list:
     print("where_clause", where_clause)
     query = f"""
         SELECT
+            q.workflow_state as quote_state,
             q.status as quotation_status,
             q.transaction_date,
             q.name as quotation_name,
