@@ -58,7 +58,7 @@
                         },
                         fields=["parent"]
                         ) %}
-                        {% if links %}
+                        {% if links and frappe.db.exists("Address", links[0].parent) %}
                         {% set address = frappe.get_doc("Address", links[0].parent) or "" %}
                         <div class="national-address">
                             <h6 class="title"> National Address </h6>
@@ -363,76 +363,10 @@
         background-color: #f0f5f9;
     }
 
-
     @media print {
         @page {
             size: A4;
-            margin: 0;
-        }
-
-        .print-format .print-container {
-            position: absolute;
-            width: 100%;
-            height: 93%;
-            padding: 25px;
-            margin: -12px -10px;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        .quotation-info {
-            width: 80%;
-            margin: auto;
-            display: block;
-        }
-
-        .quotation-info h3 {
-            display: block !important;
-            margin-bottom: 10px !important;
-            color: #118493 !important;
-            border-bottom: 2px solid #000 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        table {
-            page-break-inside: auto;
-            margin: 15px auto;
-        }
-
-        table tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-
-        table th,
-        table td {
-            border: 2px solid #ddd;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
-
-        table th {
-            text-wrap: nowrap;
-        }
-
-        .totals-section {
-            page-break-inside: avoid;
-            page-break-before: auto;
-            padding: 10px 20px;
-        }
-
-        .footer {
-            position: static;
-            margin-top: 20px;
-            page-break-inside: avoid;
-        }
-    }
-
-    @media print {
-        @page {
-            size: A4;
-            margin: 0;
+            margin: 10mm;
         }
 
         .print-format .print-container {

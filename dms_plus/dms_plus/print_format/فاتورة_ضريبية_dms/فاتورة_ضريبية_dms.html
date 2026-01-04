@@ -59,7 +59,7 @@
                     },
                     fields=["parent"]
                     ) %}
-                    {% if links %}
+                    {% if links and frappe.db.exists("Address", links[0].parent) %}
                     {% set address = frappe.get_doc("Address", links[0].parent) or "" %}
                     <div class="national-address">
                         <h6 class="title"> National Address </h6>
