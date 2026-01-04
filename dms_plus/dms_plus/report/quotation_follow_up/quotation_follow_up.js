@@ -14,7 +14,7 @@
                 "label": "Quotation Name",
                 "fieldtype": "Link",
                 "options": "Quotation",
-                "width": 180
+                "width": 220
             },
             {
                 "fieldname": "quotation_status",
@@ -55,7 +55,7 @@
                 "label": "Customer",
                 "fieldtype": "Link",
                 "options": "Customer",
-                "width": 150
+                "width": 240
             },
             {
                 "fieldname": "warehouse",
