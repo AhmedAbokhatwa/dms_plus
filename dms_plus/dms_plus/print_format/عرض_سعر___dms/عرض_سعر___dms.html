@@ -59,10 +59,11 @@
                     },
                     fields=["parent"]
                     ) %}
-                    {% if links %}
+                    {% if links and frappe.db.exists("Address", links[0].parent) %}
                     {% set address = frappe.get_doc("Address", links[0].parent) or "" %}
                     <div class="national-address">
                         <h6 class="title">العنوان الوطني</h6>
+                        {% if address %}
                         <p class="address-text">
                             العنوان: {{ address.address_line1 or "" }}<br>
                             العنوان: {{ address.address_line2 or "" }}<br>
@@ -70,6 +71,7 @@
                             الدولة: {{ address.country or "" }}<br>
                             الرقم البريدي: {{ address.pincode or "" }}
                         </p>
+                        {% endif %}
                     </div>
                     {% else %}
                     <div>
@@ -180,6 +182,7 @@
 
         <!-- Footer -->
         <div class="footer">
+            <div class="page-number-container"></div>
             <div class="image-container">
                 <img src="/private/files/DMS-Footer.jpg" alt="">
             </div>
@@ -366,7 +369,12 @@
     @media print {
         @page {
             size: A4;
-            margin: 0;
+            margin: 5mm;
+
+        }
+
+        .page {
+            margin: 10mm;
         }
 
         .print-format .print-container {
@@ -385,7 +393,7 @@
             display: block;
         }
 
-        .quotation-infoh3 {
+        .quotation-info h3 {
             display: block !important;
             margin-bottom: 10px !important;
             color: #118493 !important;
@@ -396,7 +404,7 @@
 
         table {
             page-break-inside: auto;
-            margin: 5px auto;
+            margin: 15px auto;
         }
 
         table tr {
@@ -426,5 +434,30 @@
             margin-top: 20px;
             page-break-inside: avoid;
         }
+
+        .page-number {
+            position: absolute;
+            bottom: 50px;
+            /* فوق الفوتر */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+        }
+
+
     }
 </style>
+
+<script>
+    // إذا كنت بتستخدم Frappe
+    if (typeof frappe !== 'undefined' && frappe.ui && frappe.ui.form && frappe.ui.form.Print) {
+        document.addEventListener('DOMContentLoaded', function () {
+            // هذا بيضيف أرقام الصفحات تلقائياً
+            let pageNum = 1;
+            document.body.setAttribute('data-page-count', '1');
+        });
+    }
+</script>
