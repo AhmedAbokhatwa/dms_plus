@@ -14,6 +14,12 @@ def get_columns() -> list[dict]:
     """Define report columns"""
     return [
         {
+            "label": _("Quote State"),
+            "fieldname": "quote_state",
+            "fieldtype": "Data",
+            "width": 120
+        },
+        {
             "label": _("Quotation Status"),
             "fieldname": "quotation_status",
             "fieldtype": "Data",
@@ -135,10 +141,12 @@ def get_columns() -> list[dict]:
 def get_quotation_data(filters: dict | None = None) -> list:
     """Fetch Quotations and their related Sales Orders"""
     filters = filters or {}
-
-    # Build WHERE conditions for Quotations
     where_conditions = []
     params = {}
+
+    if  filters.get("quote_state"):
+        where_conditions.append("q.workflow_state = %(quote_state)s")
+        params["quote_state"] = filters.get("quote_state")
 
     if filters.get("quotation_name"):
         where_conditions.append("q.name = %(quotation_name)s")
@@ -177,6 +185,7 @@ def get_quotation_data(filters: dict | None = None) -> list:
     print("where_clause", where_clause)
     query = f"""
         SELECT
+            q.workflow_state as quote_state,
             q.status as quotation_status,
             q.transaction_date,
             q.name as quotation_name,
@@ -202,8 +211,7 @@ def get_quotation_data(filters: dict | None = None) -> list:
 
     try:
         results = frappe.db.sql(query, params, as_dict=True)
-        # For each quotation item, fetch related ordered items and calculate ordered qty
-        # using set to avoid duplicates
+
         quotation_names = list(
                 {row.quotation_name for row in results if row.quotation_name}
             )
@@ -234,19 +242,17 @@ def get_quotation_data(filters: dict | None = None) -> list:
                 (row.quotation_name, row.item_code): row.ordered_qty
                 for row in ordered_data
             }
+
             for row in results:
                 row.ordered_qty = ordered_map.get((row.quotation_name, row.item_code), 0)
-                # منع تكرار net_total - اعرضه مرة واحدة فقط في أول صف لكل quotation
-                # تخزين آخر quotation تم عرضها
+
                 if not hasattr(get_quotation_data, 'last_quotation'):
                     get_quotation_data.last_quotation = None
-
                 if row.quotation_name != get_quotation_data.last_quotation:
-                    # أول صف للـ quotation - اعرض net_total
                     get_quotation_data.last_quotation = row.quotation_name
                 else:
-                    # الصفوف الأخرى للـ quotation - أخفي net_total (اجعله 0 أو فارغ)
                     row.quotation_net_total = None
+
         return results
     except Exception as e:
         frappe.msgprint(f"Error fetching data: {str(e)}")
