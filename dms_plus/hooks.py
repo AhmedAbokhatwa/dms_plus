@@ -124,6 +124,21 @@ app_license = "mit"
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
+permission_query_conditions = {
+    "Customer": "dms_plus.crm_permissions.customer_permissions.get_permission_query_conditions",
+    "Quotation": "dms_plus.crm_permissions.quotation_permissions.get_permission_query_conditions",
+    "Sales Order": "dms_plus.crm_permissions.sales_order_permissions.get_permission_query_conditions",
+}
+has_permission = {
+    "Customer": "dms_plus.crm_permissions.customer_permissions.has_permission",
+    "Quotation": "dms_plus.crm_permissions.quotation_permissions.has_permission",
+}
+doc_events = {
+    "Quotation": {
+        "before_cancel": "dms_plus.crm_permissions.quotation_permissions.check_quotation_owner",
+    }
+}
+
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
@@ -250,6 +265,19 @@ fixtures = [
         "filters": [
             ["module", "=", "dms_plus"],
             ["disabled", "=", 0],
+        ]
+    },
+    {
+        "dt": "Client Script",
+        "filters": [
+            ["module", "=", "dms_plus"],
+            ["enabled", "=", 1],
+        ]
+    },
+    {
+        "dt": "Workflow",
+        "filters": [
+            ["name", "=", "Quotation Workflow"]
         ]
     }
 ]
