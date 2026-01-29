@@ -91,23 +91,40 @@ def get_permission_query_conditions(user=None):
             )
             return "1=0"
 
-    frappe.throw(
-        _("You don't have permission to see Customers Please Connect to Admin"),
-        frappe.PermissionError
-    )
-    return "1=0"
+    return "1=1"
 
 def has_permission(doc, ptype, user):
     if not user:
         user = frappe.session.user
-
     roles = frappe.get_roles(user)
-    if "Junior Sales" in roles or "Senior Sales" in roles:
-        if not doc.flags.is_new and ptype in ("write", "delete"):
-        #put ->  if doc.owner != user: to make edit his Customer after Create
-            return False
-        return None
 
+    if user == "Administrator" or any(
+        role in roles
+        for role in ["CEO", "Sales Manager", "Product Manager", "Sales Coordinator"]
+    ):
+        return True
+
+    if "Junior Sales" in roles or "Senior Sales" in roles:
+
+        try:
+            if not doc.flags.is_new and ptype in ("write", "delete"):
+                 #put ->  if doc.owner != user: to make edit his Customer after Create
+                return False
+            employee = frappe.get_doc("Employee", {"user_id": user})
+            sales_person = frappe.get_doc("Sales Person", {"employee": employee.name})
+            allowed = frappe.db.exists(
+                "Sales Team",
+                {"parenttype": "Customer", "parent": doc.name, "sales_person": sales_person.name}
+            )
+
+            return bool(allowed)
+
+        except frappe.DoesNotExistError:
+            frappe.throw(
+                _("Sales Person record not found for employee {0}").format(user),
+                frappe.PermissionError
+            )
+            return False
 
 @frappe.whitelist()
 def check_item_permission(item_code):

@@ -144,6 +144,7 @@ def has_permission(doc, ptype=None, user=None):
 
     # ===== ADMIN & TOP ROLES =====
     roles = frappe.get_roles(user)
+    print("roles",roles)
     if user == "Administrator" or any(
         role in roles
         for role in ["CEO", "Sales Manager", "Product Manager", "Sales Coordinator"]
