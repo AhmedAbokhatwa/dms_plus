@@ -274,10 +274,4 @@ fixtures = [
             ["enabled", "=", 1],
         ]
     },
-    {
-        "dt": "Workflow",
-        "filters": [
-            ["name", "=", "Quotation Workflow"]
-        ]
-    }
 ]

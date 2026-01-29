@@ -14,7 +14,7 @@ def get_permission_query_conditions(user=None):
         or "Product Manager" in roles
         or "Sales Manager" in roles
     ):
-        return None  # يرى كل العملاء
+        return None  # View All Customers
 
     if "Junior Sales" in roles and "Senior Sales" not in roles:
         try:
@@ -55,8 +55,8 @@ def get_permission_query_conditions(user=None):
                 pluck="name"
             )
 
-            # تحويل Employees إلى Sales Persons
-            sales_persons_list = [senior_sales_person.name]  # Senior نفسه
+            # Convert Employees To Sales Persons
+            sales_persons_list = [senior_sales_person.name]  # Add Senior itself
 
             for emp in junior_employees:
                 try:
@@ -118,7 +118,6 @@ def check_item_permission(item_code):
 
     roles = frappe.get_roles(user)
 
-    # مثال: Junior Sales
     if "Junior Sales" in roles:
         item_group = frappe.db.get_value("Item", item_code, "item_group")
 
