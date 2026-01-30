@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-
+from frappe.model.document import Document
 def get_permission_query_conditions(user=None):
 
     if not user:
@@ -24,13 +24,16 @@ def get_permission_query_conditions(user=None):
                     {"employee": employee.name}
                 )
             query = f"""
-                exists (
-                    select 1
-                    from `tabSales Team` st
-                    where st.parenttype='Customer'
-                    and st.parent=`tabCustomer`.name
-                    and st.sales_person={frappe.db.escape(junior_sales_person.name)}
-                ) OR owner = {frappe.db.escape(user)}
+                  (
+                    exists (
+                        select 1
+                        from `tabSales Team` st
+                        where st.parenttype = 'Customer'
+                        and st.parent = `tabCustomer`.name
+                        and st.sales_person = {frappe.db.escape(junior_sales_person.name)}
+                    )
+                    OR `tabCustomer`.owner = {frappe.db.escape(user)}
+                )
             """
             return query
         except:
@@ -77,7 +80,8 @@ def get_permission_query_conditions(user=None):
                     where st.parenttype='Customer'
                       and st.parent=`tabCustomer`.name
                       and st.sales_person in ({users_sql})
-                ) OR owner = {frappe.db.escape(user)}
+                )
+                OR `tabCustomer`.owner = {frappe.db.escape(user)}
             """
             return query
 
@@ -93,7 +97,7 @@ def get_permission_query_conditions(user=None):
 
     return "1=1"
 
-def has_permission(doc, ptype, user):
+def customer_sales_permission(doc, ptype, user):
     if not user:
         user = frappe.session.user
     roles = frappe.get_roles(user)
@@ -104,27 +108,31 @@ def has_permission(doc, ptype, user):
     ):
         return True
 
+    # Junior/Senior Sales
     if "Junior Sales" in roles or "Senior Sales" in roles:
+        if doc.is_new():
+            return True
+        else:
 
-        try:
-            if not doc.flags.is_new and ptype in ("write", "delete"):
-                 #put ->  if doc.owner != user: to make edit his Customer after Create
-                return False
+            if doc.owner == user:
+                if ptype == "read":
+                    return True
+                else:
+                    #  can not edit
+                    return False
+
             employee = frappe.get_doc("Employee", {"user_id": user})
             sales_person = frappe.get_doc("Sales Person", {"employee": employee.name})
             allowed = frappe.db.exists(
                 "Sales Team",
                 {"parenttype": "Customer", "parent": doc.name, "sales_person": sales_person.name}
             )
-
-            return bool(allowed)
-
-        except frappe.DoesNotExistError:
-            frappe.throw(
-                _("Sales Person record not found for employee {0}").format(user),
-                frappe.PermissionError
-            )
-            return False
+            if allowed:
+                if ptype == "read":
+                    return True
+                else:
+                    #  can not edit
+                    return True
 
 @frappe.whitelist()
 def check_item_permission(item_code):
