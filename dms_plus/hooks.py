@@ -133,11 +133,11 @@ has_permission = {
     "Customer": "dms_plus.crm_permissions.customer_permissions.customer_sales_permission",
     "Quotation": "dms_plus.crm_permissions.quotation_permissions.has_permission",
 }
-doc_events = {
-    "Quotation": {
-        "before_cancel": "dms_plus.crm_permissions.quotation_permissions.check_quotation_owner",
-    }
-}
+# doc_events = {
+#     "Quotation": {
+#         "before_cancel": "dms_plus.crm_permissions.quotation_permissions.check_quotation_owner",
+#     }
+# }
 
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
