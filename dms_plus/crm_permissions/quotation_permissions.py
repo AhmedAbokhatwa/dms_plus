@@ -12,10 +12,25 @@ def get_permission_query_conditions(user=None):
     roles = frappe.get_roles(user)
     print(f"User: {user} & Roles: {roles}")
 
-    # ===== ADMIN & TOP ROLES =====
-    top_roles = ["CEO", "Sales Manager", "Product Manager", "Sales Coordinator"]
-    if user == "Administrator" or any(role in roles for role in top_roles):
-        return None
+    # ===== ADMIN & CEO =====
+    top_roles = ["Administrator", "CEO"]
+    if any(role in roles for role in top_roles):
+        return ""
+
+    # ==== TOP Managers =====
+    manager_roles = {"Sales Manager", "Product Manager", "Sales Master Manager"}
+    if manager_roles.intersection(roles):
+
+        team_members = get_team_hierarchy(user)
+        if not team_members:
+            return "1=0"
+
+
+        members = " ,".join(
+            frappe.db.escape(member) for member in team_members
+            )
+        print("members: ",members)
+        return f"`tabQuotation`.owner IN ({members})"
 
     # ===== JUNIOR SALES =====
     if "Junior Sales" in roles and "Senior Sales" not in roles:
@@ -142,12 +157,13 @@ def has_permission(doc, ptype=None, user=None):
     if not user:
         user = frappe.session.user
 
-    # ===== ADMIN & TOP ROLES =====
     roles = frappe.get_roles(user)
     print("roles",roles)
+
+    # ===== ADMIN & TOP LEVEL CEO Only=====
     if user == "Administrator" or any(
         role in roles
-        for role in ["CEO", "Sales Manager", "Product Manager", "Sales Coordinator"]
+        for role in ["CEO"]
     ):
         return True
 
@@ -155,6 +171,20 @@ def has_permission(doc, ptype=None, user=None):
     if doc.owner == user:
         return True
 
+    print(f"========================= validation ==============================")
+    is_team_member = check_quotation_owner(doc, user)
+    print(f"validate",is_team_member)
+
+    allowed_roles = {"Sales Manager", "Product Manager"}
+    allowed_ptypes = ("read", "write","create", "submit", "cancel")
+
+    has_allowed_role = bool(allowed_roles.intersection(roles))
+    if ptype in allowed_ptypes and is_team_member and has_allowed_role:
+
+        return True
+
+    if not doc.owner:
+        return check_quotation_owner(doc, user)
     # ===== SENIOR SALES =====
     if "Senior Sales" in roles:
         # check account_manager safely
@@ -172,8 +202,6 @@ def has_permission(doc, ptype=None, user=None):
 
     # this deny everything else
     return False
-
-
 
 #  3
 def check_quotation_owner(doc, user=None):
@@ -197,10 +225,10 @@ def check_quotation_owner(doc, user=None):
     roles = frappe.get_roles(user)
 
     # Allowed Roles to Cancel, Amend
-    allowed_roles = ["Sales Coordinator", "Product Manager", "Sales Manager"]
+    # allowed_roles = ["Sales Coordinator", "Product Manager", "Sales Manager"]
 
-    if not any(role in roles for role in allowed_roles):
-        return False
+    # if not any(role in roles for role in allowed_roles):
+    #     return False
 
     try:
         # 1. Get Document Owner
