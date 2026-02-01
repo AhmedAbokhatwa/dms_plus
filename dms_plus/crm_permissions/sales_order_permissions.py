@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-
+from dms_plus.crm_permissions.quotation_permissions import get_team_hierarchy
 
 def get_permission_query_conditions(user=None):
     """
@@ -13,10 +13,24 @@ def get_permission_query_conditions(user=None):
     roles = frappe.get_roles(user)
     print(f"User: {user} & Roles: {roles}")
 
-    # ===== ADMIN & TOP ROLES =====
-    top_roles = ["CEO", "Sales Manager", "Product Manager", "Sales Coordinator"]
-    if user == "Administrator" or any(role in roles for role in top_roles):
-        return None
+    # ===== ADMIN & CEO =====
+    top_roles = ["Administrator", "CEO"]
+    if any(role in roles for role in top_roles):
+        return ""
+    # ===== TOP Managers =====
+    manager_roles = {"Sales Manager", "Product Manager", "Sales Master Manager"}
+    if manager_roles.intersection(roles):
+
+        team_members = get_team_hierarchy(user)
+        if not team_members:
+            return "1=0"
+
+
+        members = " ,".join(
+            frappe.db.escape(member) for member in team_members
+            )
+        print("members: ",members)
+        return f"`tabSales Order`.owner IN ({members})"
 
     # ===== JUNIOR SALES =====
     if "Junior Sales" in roles and "Senior Sales" not in roles:
