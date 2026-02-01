@@ -10,13 +10,13 @@ def get_permission_query_conditions(user=None):
 
     if (
         user == "Administrator"
-        or "Sales Coordinator" in roles
-        or "Product Manager" in roles
-        or "Sales Manager" in roles
+        or "Sales Coordinator" in roles and "Sales User - Network DEPT" in roles
+        or "Product Manager" in roles and "Sales Manager - Network" in roles
+        or "Sales Manager" in roles and "Sales Manager - Network" in roles
     ):
         return None  # View All Customers
 
-    if "Junior Sales" in roles and "Senior Sales" not in roles:
+    if "Junior Sales - Network DEPT" in roles:
         try:
             employee = frappe.get_doc("Employee", {"user_id": user})
             junior_sales_person = frappe.get_doc(
@@ -43,7 +43,7 @@ def get_permission_query_conditions(user=None):
             )
             return "1=0"
 
-    if "Senior Sales" in roles:
+    if "Senior Sales" in roles and "Sales User - Network DEPT" in roles:
         try:
 
             senior_employee = frappe.get_doc("Employee", {"user_id": user})
@@ -104,12 +104,13 @@ def customer_sales_permission(doc, ptype, user):
 
     if user == "Administrator" or any(
         role in roles
-        for role in ["CEO", "Sales Manager", "Product Manager", "Sales Coordinator"]
+        for role in ["CEO", "Sales Manager - Network", "Sales Master Manager - Network"]
     ):
         return True
 
-    # Junior/Senior Sales
-    if "Junior Sales" in roles or "Senior Sales" in roles:
+    # Junior/Senior Sales in Network DEPT
+    if ("Junior Sales - Network DEPT" in roles) or \
+   ("Senior Sales - Network DEPT" in roles):
         if doc.is_new():
             return True
         else:
@@ -143,7 +144,7 @@ def check_item_permission(item_code):
 
     roles = frappe.get_roles(user)
 
-    if "Junior Sales" in roles:
+    if "Junior Sales - Network DEPT" in roles:
         item_group = frappe.db.get_value("Item", item_code, "item_group")
 
         if item_group == "Professional Services":
