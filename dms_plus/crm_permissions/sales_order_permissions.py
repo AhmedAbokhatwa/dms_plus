@@ -18,7 +18,7 @@ def get_permission_query_conditions(user=None):
     if any(role in roles for role in top_roles):
         return ""
     # ===== TOP Managers =====
-    manager_roles = {"Sales Manager", "Product Manager", "Sales Master Manager"}
+    manager_roles = {"Sales Manager - Network", "Product MGR - Network", "Sales Master Manager - Network"}
     if manager_roles.intersection(roles):
 
         team_members = get_team_hierarchy(user)
@@ -33,11 +33,11 @@ def get_permission_query_conditions(user=None):
         return f"`tabSales Order`.owner IN ({members})"
 
     # ===== JUNIOR SALES =====
-    if "Junior Sales" in roles and "Senior Sales" not in roles:
+    if "Junior Sales - Network DEPT" in roles and "Senior Sales - Network DEPT" not in roles:
         return get_junior_sales_query(user)
 
     # ===== SENIOR SALES =====
-    if "Senior Sales" in roles:
+    if "Senior Sales - Network DEPT" in roles and "Junior Sales - Network DEPT" not in roles:
         return get_senior_sales_query_only_his_orders(user)
 
     # ===== DEFAULT (Owner only) =====
