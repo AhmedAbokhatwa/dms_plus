@@ -8,6 +8,7 @@ def get_permission_query_conditions(user=None):
     NETWORK_ROLES = {
         "Sales Master Manager - Network",
         "Sales Manager - Network",
+        "Product MGR - Network",
         "Sales Coordinator - Network DEPT",
         "Senior Sales - Network DEPT",
         "Junior Sales - Network DEPT",
@@ -48,93 +49,106 @@ def get_permission_query_conditions(user=None):
         team_members = get_team_hierarchy(user)
         if not team_members:
             return "1=0"
-        members = " ,".join(
+        members_sql = " ,".join(
             frappe.db.escape(member) for member in team_members
             )
-        return f"`tabCustomer`.owner IN ({members})"
 
+        sales_persons = []
+        employees = frappe.get_all(
+            "Employee",
+            filters={"user_id": ["in", team_members]},
+            fields=["name"]
+        )
+        for emp in employees:
+            sp = frappe.get_all(
+                "Sales Person",
+                filters={"employee": emp.name},
+                fields=["name"]
+            )
+            for s in sp:
+                sales_persons.append(s.name)
+
+        sales_persons_sql = ", ".join(frappe.db.escape(sp) for sp in sales_persons)
+
+        condition = f"""(`tabCustomer`.owner IN ({members_sql})"""
+        if sales_persons:
+            condition += f"""
+            OR EXISTS (
+                SELECT 1
+                FROM `tabSales Team` st
+                WHERE st.parenttype = 'Customer'
+                AND st.parent = `tabCustomer`.name
+                AND st.sales_person IN ({sales_persons_sql})
+            )
+            """
+
+        condition += ")"
+        return condition
     # Junior/Senior Sales - Network DEPT
     is_junior = "Junior Sales - Network DEPT" in roles
     is_senior = "Senior Sales - Network DEPT" in roles
 
     if is_junior:
-        try:
-            employee = frappe.get_doc("Employee", {"user_id": user})
-            junior_sales_person = frappe.get_doc(
-                    "Sales Person",
-                    {"employee": employee.name}
-                )
-            query = f"""
-                  (
-                    exists (
-                        select 1
-                        from `tabSales Team` st
-                        where st.parenttype = 'Customer'
-                        and st.parent = `tabCustomer`.name
-                        and st.sales_person = {frappe.db.escape(junior_sales_person.name)}
-                    )
-                    OR `tabCustomer`.owner = {frappe.db.escape(user)}
-                )
-            """
-            return query
-
-        except:
-            frappe.throw(
-                _("Sales Person record not found for employee {0}").format(user),
-                frappe.PermissionError
-            )
-            return "1=0"
+        return get_junior_sales_customer(user)
 
     if is_senior:
-        try:
+        return get_senior_sales_customer(user)
 
-            senior_employee = frappe.get_doc("Employee", {"user_id": user})
-            senior_sales_person = frappe.get_doc(
+def get_junior_sales_customer(user):
+    try:
+        employee = frappe.get_doc("Employee", {"user_id": user})
+        junior_sales_person = frappe.get_doc(
                 "Sales Person",
-                {"employee": senior_employee.name}
+                {"employee": employee.name}
             )
-
-            junior_employees = frappe.get_all(
-                "Employee",
-                filters={"reports_to": senior_employee.name},
-                pluck="name"
-            )
-
-            # Convert Employees To Sales Persons
-            sales_persons_list = [senior_sales_person.name]  # Add Senior itself
-
-            for emp in junior_employees:
-                try:
-                    sp = frappe.get_doc("Sales Person", {"employee": emp})
-                    sales_persons_list.append(sp.name)
-                except:
-                    frappe.msgprint(_("Sales Person record not found for employee {0}").format(emp))
-                    pass
-
-            if not sales_persons_list:
-                return "1=0"  # False condition
-
-            users_sql = ", ".join([frappe.db.escape(sp) for sp in sales_persons_list])
-
-            query = f"""
+        query = f"""
+              (
                 exists (
-                    select 1 from `tabSales Team` st
-                    where st.parenttype='Customer'
-                      and st.parent=`tabCustomer`.name
-                      and st.sales_person in ({users_sql})
+                    select 1
+                    from `tabSales Team` st
+                    where st.parenttype = 'Customer'
+                    and st.parent = `tabCustomer`.name
+                    and st.sales_person = {frappe.db.escape(junior_sales_person.name)}
                 )
                 OR `tabCustomer`.owner = {frappe.db.escape(user)}
-            """
-            return query
-
-        except Exception as e:
-            frappe.throw(
-                _("Employee or Sales Person record not found for {0}").format(user),
-                frappe.PermissionError
             )
-            return "1=0"
+        """
+        return query
 
-    return "1=1"
+    except:
+        frappe.throw(
+            _("Sales Person record not found for employee {0}").format(user),
+            frappe.PermissionError
+        )
+        return "1=0"
+
+def get_senior_sales_customer(user):
+    try:
+        employee = frappe.get_doc("Employee", {"user_id": user})
+        senior_sales_person = frappe.get_doc(
+                "Sales Person",
+                {"employee": employee.name}
+            )
+        query = f"""
+              (
+                exists (
+                    select 1
+                    from `tabSales Team` st
+                    where st.parenttype = 'Customer'
+                    and st.parent = `tabCustomer`.name
+                    and st.sales_person = {frappe.db.escape(senior_sales_person.name)}
+                )
+                OR `tabCustomer`.owner = {frappe.db.escape(user)}
+            )
+        """
+        return query
+
+    except:
+        frappe.throw(
+            _("Sales Person record not found for employee {0}").format(user),
+            frappe.PermissionError
+        )
+        return "1=0"
 
 def customer_sales_permission(doc, ptype, user):
     if not user:
