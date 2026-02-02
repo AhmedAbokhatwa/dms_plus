@@ -1,22 +1,63 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from dms_plus.crm_permissions.utils import get_team_hierarchy
+
 def get_permission_query_conditions(user=None):
+
+    NETWORK_ROLES = {
+        "Sales Master Manager - Network",
+        "Sales Manager - Network",
+        "Sales Coordinator - Network DEPT",
+        "Senior Sales - Network DEPT",
+        "Junior Sales - Network DEPT",
+    }
 
     if not user:
         user = frappe.session.user
 
     roles = frappe.get_roles(user)
 
+    if user != "Administrator" and "CEO" not in roles:
+
+        is_network_user = any(role in NETWORK_ROLES for role in roles)
+
+        if not is_network_user:
+            return """
+                `tabCustomer`.owner NOT IN (
+                    select hr.parent
+                    from `tabHas Role` hr
+                    where hr.role in ({roles})
+                    and hr.parenttype = "User"
+                )
+            """.format(
+                roles=", ".join(frappe.db.escape(r) for r in NETWORK_ROLES)
+            )
+
     if (
         user == "Administrator"
-        or "Sales Coordinator" in roles and "Sales User - Network DEPT" in roles
-        or "Product Manager" in roles and "Sales Manager - Network" in roles
-        or "Sales Manager" in roles and "Sales Manager - Network" in roles
+        or "CEO" in roles
     ):
-        return None  # View All Customers
+        return "1=1"
 
-    if "Junior Sales - Network DEPT" in roles:
+    # View All Customers - Network DEPT
+    if ("Sales Coordinator - Network DEPT" in roles
+        or "Sales Manager - Network" in roles
+        or "Sales Master Manager - Network" in roles):
+
+        team_members = get_team_hierarchy(user)
+        if not team_members:
+            return "1=0"
+        members = " ,".join(
+            frappe.db.escape(member) for member in team_members
+            )
+        return f"`tabCustomer`.owner IN ({members})"
+
+    # Junior/Senior Sales - Network DEPT
+    is_junior = "Junior Sales - Network DEPT" in roles
+    is_senior = "Senior Sales - Network DEPT" in roles
+
+    if is_junior:
         try:
             employee = frappe.get_doc("Employee", {"user_id": user})
             junior_sales_person = frappe.get_doc(
@@ -36,6 +77,7 @@ def get_permission_query_conditions(user=None):
                 )
             """
             return query
+
         except:
             frappe.throw(
                 _("Sales Person record not found for employee {0}").format(user),
@@ -43,7 +85,7 @@ def get_permission_query_conditions(user=None):
             )
             return "1=0"
 
-    if "Senior Sales" in roles and "Sales User - Network DEPT" in roles:
+    if is_senior:
         try:
 
             senior_employee = frappe.get_doc("Employee", {"user_id": user})
@@ -86,9 +128,6 @@ def get_permission_query_conditions(user=None):
             return query
 
         except Exception as e:
-            frappe.logger().error(
-                f"Error in get_permission_query_conditions for Senior Sales {user}: {str(e)}"
-            )
             frappe.throw(
                 _("Employee or Sales Person record not found for {0}").format(user),
                 frappe.PermissionError

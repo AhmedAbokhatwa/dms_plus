@@ -1,6 +1,6 @@
 import frappe
 from frappe import _
-from dms_plus.crm_permissions.quotation_permissions import get_team_hierarchy
+from dms_plus.crm_permissions.utils import get_team_hierarchy
 
 def get_permission_query_conditions(user=None):
     """
@@ -32,12 +32,14 @@ def get_permission_query_conditions(user=None):
         print("members: ",members)
         return f"`tabSales Order`.owner IN ({members})"
 
+    is_junior = "Junior Sales - Network DEPT" in roles
+    is_senior = "Senior Sales - Network DEPT" in roles
     # ===== JUNIOR SALES =====
-    if "Junior Sales - Network DEPT" in roles and "Senior Sales - Network DEPT" not in roles:
+    if is_junior and not is_senior:
         return get_junior_sales_query(user)
 
     # ===== SENIOR SALES =====
-    if "Senior Sales - Network DEPT" in roles and "Junior Sales - Network DEPT" not in roles:
+    if is_senior and not is_junior:
         return get_senior_sales_query_only_his_orders(user)
 
     # ===== DEFAULT (Owner only) =====
