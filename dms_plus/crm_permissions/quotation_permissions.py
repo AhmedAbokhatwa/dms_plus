@@ -12,8 +12,19 @@ def get_permission_query_conditions(user=None):
             return quotations owned by self only
         if user is Junior Sales - Network DEPT:
             return quotations owned by self or where account_manager is self
+        if Coordinator:
+            return quotations owned by self only or where account_manager is self
         if none of the above, return quotations owned by self only
     """
+
+    NETWORK_ROLES = {
+        "Sales Master Manager - Network",
+        "Sales Manager - Network",
+        "Product MGR - Network",
+        "Sales Coordinator - Network DEPT",
+        "Senior Sales - Network DEPT",
+        "Junior Sales - Network DEPT",
+    }
 
     if not user:
         user = frappe.session.user
@@ -21,16 +32,38 @@ def get_permission_query_conditions(user=None):
     roles = frappe.get_roles(user)
     print(f"User: {user} & Roles: {roles}")
 
+    # ===== DEFAULT (Owner only) =====
+    if user != "Administrator" and "CEO" not in roles:
+        is_network_user = any(role in NETWORK_ROLES for role in roles)
+
+        if not is_network_user:
+            return """
+                `tabQuotation`.owner NOT IN (
+                    select hr.parent
+                    from `tabHas Role` hr
+                    where hr.role in ({roles})
+                    and hr.parenttype = "User"
+                )
+            """.format(
+                roles=", ".join(frappe.db.escape(r) for r in NETWORK_ROLES)
+            )
+
     # ===== ADMIN & CEO =====
     top_roles = ["Administrator", "CEO"]
     if any(role in roles for role in top_roles):
         return ""
 
     # ==== TOP Managers =====
-    manager_roles = {"Sales Manager - Network", "Product MGR - Network", "Sales Master Manager - Network"}
+    manager_roles = {
+        "sales Coordinator - Network DEPT",
+        "Sales Manager - Network",
+        "Product MGR - Network",
+        "Sales Master Manager - Network"
+        }
     if manager_roles.intersection(roles):
 
         team_members = get_team_hierarchy(user)
+        print("team_members: ",team_members)
         if not team_members:
             return "1=0"
 
@@ -43,17 +76,19 @@ def get_permission_query_conditions(user=None):
 
     is_junior = "Junior Sales - Network DEPT" in roles
     is_senior = "Senior Sales - Network DEPT" in roles
-
+    is_coordinator = "Sales Coordinator - Network DEPT" in roles
     # ===== JUNIOR SALES =====
     if is_junior:
         return get_junior_sales_query(user)
 
     # ===== SENIOR SALES =====
-    if is_senior and not is_junior:
+    if is_senior:
         return get_senior_sales_query_only_his_quote(user)
-
-    # ===== DEFAULT (Owner only) =====
-    return f"`tabQuotation`.owner={frappe.db.escape(user)}"
+    # ===== SALES COORDINATOR =====
+    if is_coordinator:
+        return '''`tabQuotation`.owner={owner}'''.format(
+            owner=frappe.db.escape(user)
+        )
 
 
 def get_junior_sales_query(user):
@@ -165,6 +200,14 @@ def get_senior_sales_query_with_lower_level(user):
 def has_permission(doc, ptype=None, user=None):
     """
     Prevent opening quotation directly via URL if user is not allowed
+    -> Check if the user is part of the Quotation owner's team.
+    Returns:
+        bool: True if the user has permission, False otherwise.
+        if user is Admin or CEO: True
+        if user is Sales Manager/Product MGR/Sales Master Manager and part of team: True
+        if user is Senior Sales - Network DEPT and owner: True
+        if user is Junior Sales - Network DEPT and owner or account_manager: True
+        else: False
     """
     if not user:
         user = frappe.session.user
@@ -187,7 +230,12 @@ def has_permission(doc, ptype=None, user=None):
     is_team_member = check_quotation_owner(doc, user)
     print(f"validate",is_team_member)
 
-    allowed_roles = {"Sales Manager - Network", "Product MGR - Network", "Sales Master Manager - Network"}
+    allowed_roles = {
+        "Sales Manager - Network",
+        "Product MGR - Network",
+        "Sales Coordinator - Network DEPT",
+        "Sales Master Manager - Network"
+        }
     allowed_ptypes = ("read", "write","create", "submit", "cancel")
 
     has_allowed_role = bool(allowed_roles.intersection(roles))

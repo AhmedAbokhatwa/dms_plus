@@ -6,12 +6,34 @@ def get_permission_query_conditions(user=None):
     """
         Sales Order View Permission Check
     """
-
+    NETWORK_ROLES = {
+        "Sales Master Manager - Network",
+        "Sales Manager - Network",
+        "Product MGR - Network",
+        "Sales Coordinator - Network DEPT",
+        "Senior Sales - Network DEPT",
+        "Junior Sales - Network DEPT",
+    }
     if not user:
         user = frappe.session.user
 
     roles = frappe.get_roles(user)
     print(f"User: {user} & Roles: {roles}")
+    # ===== DEFAULT (Owner only) =====
+    if user != "Administrator" and "CEO" not in roles:
+        is_network_user = any(role in NETWORK_ROLES for role in roles)
+
+        if not is_network_user:
+            return """
+                `tabSales Order`.owner NOT IN (
+                    select hr.parent
+                    from `tabHas Role` hr
+                    where hr.role in ({roles})
+                    and hr.parenttype = "User"
+                )
+            """.format(
+                roles=", ".join(frappe.db.escape(r) for r in NETWORK_ROLES)
+            )
 
     # ===== ADMIN & CEO =====
     top_roles = ["Administrator", "CEO"]
@@ -41,9 +63,6 @@ def get_permission_query_conditions(user=None):
     # ===== SENIOR SALES =====
     if is_senior and not is_junior:
         return get_senior_sales_query_only_his_orders(user)
-
-    # ===== DEFAULT (Owner only) =====
-    return f"`tabSales Order`.owner = {frappe.db.escape(user)}"
 
 
 def get_junior_sales_query(user):
