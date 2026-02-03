@@ -54,12 +54,7 @@ def get_permission_query_conditions(user=None):
         return ""
 
     # ==== TOP Managers =====
-    manager_roles = {
-        "sales Coordinator - Network DEPT",
-        "Sales Manager - Network",
-        "Product MGR - Network",
-        "Sales Master Manager - Network"
-        }
+    manager_roles = {"Sales Manager - Network", "Product MGR - Network", "Sales Master Manager - Network"}
     if manager_roles.intersection(roles):
 
         team_members = get_team_hierarchy(user)
@@ -68,6 +63,7 @@ def get_permission_query_conditions(user=None):
             return "1=0"
 
 
+        print("members count: ",len(team_members))
         members = " ,".join(
             frappe.db.escape(member) for member in team_members
             )
