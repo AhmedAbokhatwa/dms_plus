@@ -82,3 +82,82 @@ def get_all_managers(emp_name, visited=None):
         frappe.logger().error(f"Error getting managers for {emp_name}: {str(e)}")
 
     return managers
+
+def get_network_user_query(user, doctype, include_account_manager):
+    """
+    Returns SQL query conditions to filter documents where the account manager is in the user's
+    or he is the owner. This allows users to see his own documents
+    """
+    tab = f"`tab{doctype}`"
+
+    try:
+        if not frappe.db.exists("Employee", {"user_id": user}):
+            return f"{tab}.owner={frappe.db.escape(user)}"
+
+        employee = frappe.get_doc("Employee", {"user_id": user})
+        conditions = [f"{tab}.owner={frappe.db.escape(user)}"]
+
+        if include_account_manager:
+            conditions.append(f"{tab}.account_manager={frappe.db.escape(employee.name)}")
+
+        return " OR ".join(conditions)
+
+    except Exception as e:
+        frappe.logger().error(f"Error in get_network_user_query for {user}: {str(e)}")
+        return f"{tab}.owner={frappe.db.escape(user)}"
+
+
+
+
+def get_senior_sales_query_with_lower_level(user):
+
+    try:
+        if not frappe.db.exists("Employee", {"user_id": user}):
+            return f"`tabQuotation`.owner={frappe.db.escape(user)}"
+
+        senior_employee = frappe.get_doc("Employee", {"user_id": user})
+        sales_person = None
+
+        try:
+            sales_person = frappe.get_doc("Sales Person", {"employee": senior_employee.name})
+        except:
+            frappe.throw(f" No Sales Person found for {senior_employee.name}")
+
+        # احصل على Junior Employees
+        junior_employees = frappe.get_all(
+            "Employee",
+            filters={"reports_to": senior_employee.name},
+            fields=["name", "user_id"]
+        )
+
+        sales_persons_list = []
+
+        if sales_person:
+            sales_persons_list.append(sales_person.employee)
+
+
+        for emp in junior_employees:
+            try:
+                sp = frappe.get_doc("Sales Person", {"employee": emp.name})
+                sales_persons_list.append(sp.employee)
+            except:
+                continue
+
+        if not sales_persons_list:
+            query = f"`tabQuotation`.owner={frappe.db.escape(user)}"
+            return query
+
+        # بناء الـ Query
+        sales_persons_sql = ", ".join([frappe.db.escape(sp) for sp in sales_persons_list])
+
+        query = f"""
+        (
+            `tabQuotation`.owner={frappe.db.escape(user)}
+            or `tabQuotation`.account_manager in ({sales_persons_sql})
+        )
+        """
+        return query
+
+    except Exception as e:
+        frappe.logger().error(f"Error in get_senior_sales_query for {user}: {str(e)}")
+        return f"`tabQuotation`.owner={frappe.db.escape(user)}"
