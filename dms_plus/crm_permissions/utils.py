@@ -91,14 +91,16 @@ def get_network_user_query(user, doctype, include_account_manager):
     tab = f"`tab{doctype}`"
 
     try:
-        if not frappe.db.exists("Employee", {"user_id": user}):
-            return f"{tab}.owner={frappe.db.escape(user)}"
 
-        employee = frappe.get_doc("Employee", {"user_id": user})
         conditions = [f"{tab}.owner={frappe.db.escape(user)}"]
+        if not frappe.db.exists("Employee", {"user_id": user}):
+            return conditions[0]
 
-        if include_account_manager:
-            conditions.append(f"{tab}.account_manager={frappe.db.escape(employee.name)}")
+
+        if include_account_manager and frappe.db.has_column(doctype, "account_manager"):
+            employee = frappe.get_doc("Employee", {"user_id": user})
+            if employee:
+                conditions.append(f"{tab}.account_manager={frappe.db.escape(employee.name)}")
 
         return " OR ".join(conditions)
 
