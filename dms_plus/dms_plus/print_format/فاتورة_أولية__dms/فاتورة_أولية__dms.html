@@ -110,9 +110,9 @@
                     <td>
                         {% if item.discount_amount %}
                         {{ frappe.utils.fmt_money((item.discount_amount / (item.rate * item.qty)) * 100, precision= 2)
-                        }}%
+                        + '%'}}%
                         {% else %}
-                        0%
+                        {{"0" + "%"}}
                         {% endif %}
                     </td>
 
