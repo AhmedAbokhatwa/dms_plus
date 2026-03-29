@@ -17,7 +17,7 @@ app_logo_url = "/assets/dms_plus/images/dms_logo.png"
 add_to_apps_screen = [
 	{
 		"name": "dms_plus",
-		"logo": "/assets/dms_plus/images/dms_logo.png",
+		"logo": "/assets/dms_plus/images/dms_fav_icon_app.png",
 		"title": "DMS Plus",
 		"route": "/app/home",
 		# "has_permission": "dms_plus.api.permission.has_app_permission"
