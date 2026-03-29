@@ -107,7 +107,7 @@
                     <td>{{ item.get_formatted("rate" , item) }}</td>
                     <td>
                         {% if item.discount_amount %}
-                        {{ frappe.utils.fmt_money((item.discount_amount / (item.rate * item.qty)) * 100) + '%' }}
+                        {{ item.discount_percentage or 0 }}%
                         {% else %}
                         {{"0" + "%"}}
                         {% endif %}
