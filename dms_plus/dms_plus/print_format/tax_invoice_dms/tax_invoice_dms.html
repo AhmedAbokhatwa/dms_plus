@@ -103,7 +103,7 @@
                 {% for item in doc.items %}
                 <tr>
                     <td>{{ item.item_name }}</td>
-                    <td style="width: 100%; height:100%; font-size:10px">{{ item.description }}</td>
+                    <td>{{ item.description }}</td>
                     <td>{{ item.qty }}</td>
                     <td>{{ "%.2f"|format(item.rate)}} {{doc.currency}}</td>
                     <td>

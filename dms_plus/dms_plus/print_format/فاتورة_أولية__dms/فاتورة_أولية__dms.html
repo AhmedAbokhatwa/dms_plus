@@ -102,7 +102,7 @@
                 {% for item in doc.items %}
                 <tr>
                     <td>{{ item.item_name }}</td>
-                    <td style="width: 100%; height:100%; font-size:10px">{{ item.description }}</td>
+                    <td>{{ item.description }}</td>
                     <td>{{ item.qty }}</td>
                     <td>
                         {{ item.get_formatted("rate", item) }}
@@ -405,7 +405,6 @@
             table tr {
                 page-break-inside: avoid;
                 page-break-after: auto;
-                text-wrap: nowrap;
             }
 
             .print-format td {
