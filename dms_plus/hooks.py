@@ -4,6 +4,9 @@ app_publisher = "dms developers"
 app_description = "dms"
 app_email = "dms@gmail.com"
 app_license = "mit"
+source_link = "https://github.com/AhmedAbokhatwa/dms_plus.git"
+app_logo_url = "/assets/dms_plus/images/dms_logo.png"
+
 
 # Apps
 # ------------------
@@ -11,15 +14,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "dms_plus",
-# 		"logo": "/assets/dms_plus/logo.png",
-# 		"title": "dms_plus",
-# 		"route": "/dms_plus",
-# 		"has_permission": "dms_plus.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "dms_plus",
+		"logo": "/assets/dms_plus/images/dms_logo.png",
+		"title": "DMS Plus",
+		"route": "/app/home",
+		# "has_permission": "dms_plus.api.permission.has_app_permission"
+	}
+]
 
 # Includes in <head>
 # ------------------
