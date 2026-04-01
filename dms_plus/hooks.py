@@ -84,10 +84,13 @@ add_to_apps_screen = [
 # 	"methods": "dms_plus.utils.jinja_methods",
 # 	"filters": "dms_plus.utils.jinja_filters"
 # }
-
+app_include_js = [
+    "/assets/dms_plus/js/permission_manager_patch.js"
+]
 # Installation
 # ------------
 
+after_install = "dms_plus.install.roles.after_install"
 # before_install = "dms_plus.install.before_install"
 # after_install = "dms_plus.install.after_install"
 
@@ -96,7 +99,7 @@ add_to_apps_screen = [
 
 # before_uninstall = "dms_plus.uninstall.before_uninstall"
 # after_uninstall = "dms_plus.uninstall.after_uninstall"
-
+after_uninstall = "dms_plus.install.roles.after_uninstall"
 # Integration Setup
 # ------------------
 # To set up dependencies/integrations with other apps
@@ -127,10 +130,13 @@ add_to_apps_screen = [
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
+# permission_query_conditions = {
+#     "Customer": "dms_plus.crm_permissions.customer_permissions.get_permission_query_conditions",
+#     "Quotation": "dms_plus.crm_permissions.quotation_permissions.get_permission_query_conditions",
+#     "Sales Order": "dms_plus.crm_permissions.sales_order_permissions.get_permission_query_conditions",
+# }
 permission_query_conditions = {
-    "Customer": "dms_plus.crm_permissions.customer_permissions.get_permission_query_conditions",
-    "Quotation": "dms_plus.crm_permissions.quotation_permissions.get_permission_query_conditions",
-    "Sales Order": "dms_plus.crm_permissions.sales_order_permissions.get_permission_query_conditions",
+    "*": "dms_plus.permissions.get_scope_condition"
 }
 has_permission = {
     "Customer": "dms_plus.crm_permissions.customer_permissions.customer_sales_permission",
@@ -142,6 +148,9 @@ has_permission = {
 #     }
 # }
 
+has_permission = {
+    "*": "dms_plus.new_permissions.permissions.has_permission"
+}
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }

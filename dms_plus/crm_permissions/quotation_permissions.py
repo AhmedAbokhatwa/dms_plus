@@ -5,16 +5,21 @@ from dms_plus.crm_permissions.utils import get_team_hierarchy, get_network_user_
 def get_permission_query_conditions(user=None):
     """
         Quotation View Permission Check
-        if user is Admin or CEO: return all
+        if user is Admin or CEO: return all Qutotations #he ask me to add one from sales team to see all quotations but i think its better to give him access to all quotations as he is the top level manager and he can assign sales team to specific quotation if needed
+
         if user is Sales Manager/Product MGR/Sales Master Manager:
-            return quotations owned by team members
+            return quotations owned by team members # we can link document to department or comapny to make it more accurate
+
         if user is Senior Sales - Network DEPT:
             return quotations owned by self only
+
         if user is Junior Sales - Network DEPT:
             return quotations owned by self or where account_manager is self
+
         if Coordinator:
             return quotations owned by self only or where account_manager is self
-        if none of the above, return quotations owned by self only
+
+        if none of the above, return quotations if he is Creator
     """
 
     NETWORK_ROLES = {
