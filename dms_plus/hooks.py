@@ -130,17 +130,20 @@ after_uninstall = "dms_plus.install.roles.after_uninstall"
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
+#  ## Start comment 001
 # permission_query_conditions = {
 #     "Customer": "dms_plus.crm_permissions.customer_permissions.get_permission_query_conditions",
 #     "Quotation": "dms_plus.crm_permissions.quotation_permissions.get_permission_query_conditions",
 #     "Sales Order": "dms_plus.crm_permissions.sales_order_permissions.get_permission_query_conditions",
 # }
+# has_permission = {
+#     "Customer": "dms_plus.crm_permissions.customer_permissions.customer_sales_permission",
+#     "Quotation": "dms_plus.crm_permissions.quotation_permissions.has_permission",
+# }
+#  End comment 001
+
 permission_query_conditions = {
     "*": "dms_plus.permissions.get_scope_condition"
-}
-has_permission = {
-    "Customer": "dms_plus.crm_permissions.customer_permissions.customer_sales_permission",
-    "Quotation": "dms_plus.crm_permissions.quotation_permissions.has_permission",
 }
 # doc_events = {
 #     "Quotation": {
@@ -148,9 +151,6 @@ has_permission = {
 #     }
 # }
 
-has_permission = {
-    "*": "dms_plus.new_permissions.permissions.has_permission"
-}
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }

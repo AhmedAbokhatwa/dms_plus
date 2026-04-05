@@ -33,6 +33,21 @@ def create_roles():
         "Sales Coordinator - AVTECH",
         "Senior Sales - AVTECH",
         "Junior Sales - AVTECH",
+
+        #  Corrdinator
+        "Sales Coordinator - ALVOIP",
+        "Sales Coordinator - AVTECH",
+        "Sales Coordinator - DMS",
+
+        "Logistic User",
+
+        # i have Stock Manager and Stock User
+        # "Warehouse Manager",
+        # "Warehouse User",
+        # Marketing Manager
+
+        "Technician",
+        "Technical Engineer",
     ]
 
     for role in roles:
@@ -81,8 +96,9 @@ def delete_roles():
 
 def create_ptypes():
     """ Create Permission Types For All Documents"""
-    for doctype in frappe.get_all("DocType", filters={"istable": 0}, pluck="name"):
-        for ptype in ["can_view_company", "can_view_all"]:
+    doctypes = ["Customer", "Quotation", "Sales Order"]
+    for doctype in doctypes:
+        for ptype in ["can_view_if_account_manager"]:
             if not frappe.db.exists("Permission Type", {"perm_type": ptype, "doc_type": doctype}):
                 frappe.get_doc({
                     "doctype": "Permission Type",
@@ -94,8 +110,121 @@ def create_ptypes():
 def delete_ptypes():
     """ Delete Permission Types For All Documents"""
     for doctype in frappe.get_all("DocType", filters={"istable": 0}, pluck="name"):
-        for ptype in ["can_view_company", "can_view_all"]:
+        for ptype in ["can_view_if_account_manager"]:
             if frappe.db.exists("Permission Type", {"perm_type": ptype, "doc_type": doctype}):
                 doc = frappe.get_doc("Permission Type", {"perm_type": ptype, "doc_type": doctype})
                 doc.delete(ignore_permissions=True)
     frappe.db.commit()
+
+
+def set_full_permissions():
+
+    roles = [
+        "System Manager",
+        "Sales Master Manager - ALVOIP",
+        "Sales Master Manager - AVTECH",
+        "Sales Master Manager - DMS",
+
+        "Sales Manager - ALVOIP",
+        "Sales Manager - AVTECH",
+        "Sales Manager - DMS",
+    ]
+    all_doctypes = frappe.get_all(
+        "DocType",
+        filters={"istable": 0, "issingle": 0},
+        pluck="name"
+    )
+
+    print(f"Found {len(all_doctypes)} DocTypes")
+
+    for role in roles:
+        print(f"Processing role: {role}")
+
+        for doctype in all_doctypes:
+            frappe.db.sql("""
+                DELETE FROM `tabCustom DocPerm`
+                WHERE parent = %s AND role = %s AND permlevel = 0
+            """, (doctype, role))
+
+            frappe.db.sql("""
+                INSERT INTO `tabCustom DocPerm`
+                    (name, parent, role, permlevel,
+                     `select`, `read`, `write`, `create`, `delete`,
+                     print, email, report, `import`, export, share,
+                     amend, submit, cancel)
+                VALUES
+                    (%s, %s, %s, 0,
+                     1, 1, 1, 1, 1,
+                     1, 1, 1, 1, 1, 1,
+                     1, 1, 1)
+            """, (frappe.generate_hash(length=10), doctype, role))
+
+    frappe.db.commit()
+    print("\nDone! Run: bench clear-cache")
+
+
+def set_permissions(role: str, full_access: bool = True):
+    """
+    Set custom DocPerm for a given role across all non-table, non-single DocTypes.
+
+    Args:
+        role: The role name to set permissions for
+        full_access: If True, grant all permissions. If False, grant read-only.
+    """
+    all_doctypes = frappe.get_all(
+        "DocType",
+        filters={"istable": 0, "issingle": 0},
+        pluck="name"
+    )
+    print(f"Found {len(all_doctypes)} DocTypes")
+    print(f"Processing role: {role}")
+
+    for doctype in all_doctypes:
+        frappe.db.sql("""
+            DELETE FROM `tabCustom DocPerm`
+            WHERE parent = %s AND role = %s AND permlevel = 0
+        """, (doctype, role))
+
+        if full_access:
+            frappe.db.sql("""
+                INSERT INTO `tabCustom DocPerm`
+                    (name, parent, role, permlevel,
+                     `select`, `read`, `write`, `create`, `delete`,
+                     print, email, report, `import`, export, share,
+                     amend, submit, cancel)
+                VALUES
+                    (%s, %s, %s, 0,
+                     1, 1, 1, 1, 1,
+                     1, 1, 1, 1, 1, 1,
+                     1, 1, 1)
+            """, (frappe.generate_hash(length=10), doctype, role))
+
+    frappe.db.commit()
+    action = "set (full access)" if full_access else "set (read-only)"
+    print(f"Done! Permissions {action} for role: {role}")
+    print("Run: bench clear-cache")
+
+
+def delete_permissions(role: str):
+    """
+    Delete all Custom DocPerm records for a given role.
+
+    Args:
+        role: The role name to remove all custom permissions for
+    """
+    result = frappe.db.sql("""
+        SELECT COUNT(*) FROM `tabCustom DocPerm`
+        WHERE role = %s
+    """, (role,))
+
+    count = result[0][0] if result else 0
+    print(f"Found {count} Custom DocPerm records for role: {role}")
+
+    frappe.db.sql("""
+        DELETE FROM `tabCustom DocPerm`
+        WHERE role = %s
+    """, (role,))
+
+    frappe.db.commit()
+    print(f"Done! Deleted {count} permissions for role: {role}")
+    print("Run: bench clear-cache")
