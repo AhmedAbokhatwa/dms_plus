@@ -116,6 +116,61 @@ def delete_ptypes():
                 doc.delete(ignore_permissions=True)
     frappe.db.commit()
 
+def remove_permission_type(ptype: str):
+    """
+    Remove a specific permission type from:
+    1. Custom DocPerm (first - dependency)
+    2. Permission Type
+    """
+
+    if not ptype:
+        frappe.throw("Permission type is required")
+
+    # هنجمع الـ doctypes اللي فيها الـ ptype
+    doctypes = frappe.get_all(
+        "Permission Type",
+        filters={"perm_type": ptype},
+        pluck="doc_type"
+    )
+
+    for doctype in doctypes:
+
+        # 1. Delete from Custom DocPerm (IMPORTANT FIRST)
+        custom_perms = frappe.get_all(
+            "Custom DocPerm",
+            filters={
+                "parent": doctype,
+                "perm_type": ptype
+            },
+            pluck="name"
+        )
+
+        for perm in custom_perms:
+            frappe.delete_doc(
+                "Custom DocPerm",
+                perm,
+                ignore_permissions=True
+            )
+
+        # 2. Delete from Permission Type
+        perm_types = frappe.get_all(
+            "Permission Type",
+            filters={
+                "perm_type": ptype,
+                "doc_type": doctype
+            },
+            pluck="name"
+        )
+
+        for pt in perm_types:
+            frappe.delete_doc(
+                "Permission Type",
+                pt,
+                ignore_permissions=True
+            )
+
+    frappe.db.commit()
+    frappe.clear_cache()
 
 def set_full_permissions():
 
