@@ -191,25 +191,30 @@ def customer_sales_permission(doc, ptype, user):
 @frappe.whitelist()
 def check_item_permission(item_code):
     user = frappe.session.user
-
     if not item_code:
         return {"allowed": True}
 
     roles = frappe.get_roles(user)
+    juniors = {
+        "Junior Sales - ALVOIP",
+        "Junior Sales - DMS",
+        "Junior Sales - AVTECH",
+    }
 
-    if "Junior Sales - Network DEPT" in roles:
-        item_group = frappe.db.get_value("Item", item_code, "item_group")
+    matched_roles = set(roles) & juniors
+    if not matched_roles:
+        return {"allowed": True}
 
-        if item_group == "Professional Services":
-            return {
-                "allowed": False,
-                "item_group": item_group,
-                "reason": "Junior Sales users are not allowed to add items from this group"
-            }
+    # تجنب الـ exception بـ logical condition
+    item_group = frappe.db.get_value("Item", item_code, "item_group")
+    if item_group != "Professional Service":
+        return {"allowed": True}
 
-    return {"allowed": True}
-
-
-
-
+    # هنا بس نـthrow لأننا متأكدين إنه ممنوع
+    frappe.throw(
+        _("{0} is not allowed for your role(s): {1}").format(
+            item_code, ", ".join(matched_roles)
+        ),
+        frappe.ValidationError
+    )
 

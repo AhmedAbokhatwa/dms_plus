@@ -8,49 +8,37 @@ def after_uninstall():
     delete_roles()
     delete_ptypes()
 
-def create_roles():
-    roles = [
-        # DMS
-        "Sales Master Manager - DMS",
-        "Sales Manager - DMS",
-        "Product Manager - DMS",
-        "Sales Coordinator - DMS",
-        "Senior Sales - DMS",
-        "Junior Sales - DMS",
 
-        # ALVOIP
-        "Sales Master Manager - ALVOIP",
-        "Sales Manager - ALVOIP",
-        "Product Manager - ALVOIP",
-        "Sales Coordinator - ALVOIP",
-        "Senior Sales - ALVOIP",
-        "Junior Sales - ALVOIP",
-
-        # AVTECH
-        "Sales Master Manager - AVTECH",
-        "Sales Manager - AVTECH",
-        "Product Manager - AVTECH",
-        "Sales Coordinator - AVTECH",
-        "Senior Sales - AVTECH",
-        "Junior Sales - AVTECH",
-
-        #  Corrdinator
-        "Sales Coordinator - ALVOIP",
-        "Sales Coordinator - AVTECH",
-        "Sales Coordinator - DMS",
-
-        "Logistic User",
-
+def get_roles():
+    companies = ["DMS", "ALVOIP", "AVTECH"]
+    base_roles = [
+        "Sales Master Manager",
+        "Sales Manager",
+        "Product Manager",
+        "Sales Coordinator",
+        "Senior Sales",
+        "Junior Sales",
         # i have Stock Manager and Stock User
         # "Warehouse Manager",
         # "Warehouse User",
         # Marketing Manager
 
+    ]
+
+    roles = [f"{role} - {company}" for company in companies for role in base_roles]
+
+    # extra roles
+    roles += [
+        "Logistic User",
         "Technician",
         "Technical Engineer",
     ]
 
-    for role in roles:
+    return roles
+
+def create_roles(roles=None):
+    roles = roles or get_roles()
+    for role in list(set(roles)):
         if not frappe.db.exists("Role", role):
             frappe.get_doc({
                 "doctype": "Role",
@@ -61,34 +49,9 @@ def create_roles():
 
     frappe.db.commit()
 
-def delete_roles():
-    roles = [
-        # DMS
-        "Sales Master Manager - DMS",
-        "Sales Manager - DMS",
-        "Product Manager - DMS",
-        "Sales Coordinator - DMS",
-        "Senior Sales - DMS",
-        "Junior Sales - DMS",
-
-        # ALVOIP
-        "Sales Master Manager - ALVOIP",
-        "Sales Manager - ALVOIP",
-        "Product Manager - ALVOIP",
-        "Sales Coordinator - ALVOIP",
-        "Senior Sales - ALVOIP",
-        "Junior Sales - ALVOIP",
-
-        # AVTECH
-        "Sales Master Manager - AVTECH",
-        "Sales Manager - AVTECH",
-        "Product Manager - AVTECH",
-        "Sales Coordinator - AVTECH",
-        "Senior Sales - AVTECH",
-        "Junior Sales - AVTECH",
-    ]
-
-    for role in roles:
+def delete_roles(roles=None):
+    roles = roles or get_roles()
+    for role in list(set(roles)):
         if frappe.db.exists("Role", role):
             frappe.delete_doc("Role", role, ignore_permissions=True)
 

@@ -49,3 +49,27 @@ def get_scope_condition(user, doctype):
         return f"`tabSales Order`.owner = {frappe.db.escape(user)}"
 
     return "1=1"
+
+
+JUNIOR_ROLES = {
+    "Junior Sales - ALVOIP",
+    "Junior Sales - DMS",
+    "Junior Sales - AVTECH",
+}
+
+BLOCKED_ITEM_GROUP = "Professional Service"
+
+def validate_professional_service(doc, method):
+    # Check if current user has any junior role
+    user_roles = set(frappe.get_roles(frappe.session.user))
+    if not user_roles & JUNIOR_ROLES:
+        return  # Not a junior, skip
+
+    # Check items in the sales order
+    for row in doc.items:
+        if row.item_group == BLOCKED_ITEM_GROUP:
+            frappe.throw(
+                f"Row {row.idx}: Your Role is {', '.join(user_roles & JUNIOR_ROLES)} are not allowed to add items from "
+                f"the <b>{BLOCKED_ITEM_GROUP}</b> group.",
+                title="Permission Denied"
+            )

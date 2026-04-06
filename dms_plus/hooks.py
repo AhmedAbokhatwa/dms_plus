@@ -84,9 +84,7 @@ add_to_apps_screen = [
 # 	"methods": "dms_plus.utils.jinja_methods",
 # 	"filters": "dms_plus.utils.jinja_filters"
 # }
-app_include_js = [
-    "/assets/dms_plus/js/permission_manager_patch.js"
-]
+
 # Installation
 # ------------
 
@@ -130,6 +128,7 @@ after_uninstall = "dms_plus.install.roles.after_uninstall"
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
 #
+
 #  ## Start comment 001
 # permission_query_conditions = {
 #     "Customer": "dms_plus.crm_permissions.customer_permissions.get_permission_query_conditions",
@@ -151,6 +150,14 @@ permission_query_conditions = {
 #     }
 # }
 
+doc_events = {
+    "Sales Order": {
+        "validate": "dms_plus.crm_permissions.permissions.validate_professional_service",
+    },
+    "Quotation": {
+        "validate": "dms_plus.crm_permissions.permissions.validate_professional_service",
+    }
+}
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
