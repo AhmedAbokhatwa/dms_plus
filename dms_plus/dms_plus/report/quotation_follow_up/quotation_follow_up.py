@@ -105,7 +105,7 @@ def get_columns() -> list[dict]:
             "width": 150
         },
           {
-            "label": _("Quotation Net Total"),
+            "label": _("Quotation (Net Total)"),
             "fieldname": "quotation_net_total",
             "fieldtype": "Currency",
             "width": 150
@@ -118,7 +118,7 @@ def get_columns() -> list[dict]:
             "width": 120
         },
         {
-            "label": _("Sales Order Qty"),
+            "label": _("Sales Order (Qty)"),
             "fieldname": "ordered_qty",
             "fieldtype": "Int",
             "width": 150
@@ -243,10 +243,3 @@ def get_quotation_data(filters: dict | None = None) -> list:
         frappe.msgprint(f"Error fetching data: {str(e)}")
         return []
 
-
-# Test Case
-# SAL-QTN-2025-00026 have twot items Item-0001 qty 10 and Item-0002 qty 5
-# create three sales order
-#  first sales order Item-0001 qty 2 Done
-#  second sales order Item-0001 qty 3 not Done
-#  third sales order Item-0002 qty 3 not Done
