@@ -64,13 +64,6 @@
                 "options": "Warehouse",
                 "width": 150
             },
-            {
-                "fieldname": "account_manager",
-                "label": "Account Manager",
-                "fieldtype": "Link",
-                "options": "Employee",
-                "width": 180
-            },
         ],
      onload: function (report) {
         frappe.model.with_doctype("Quotation", function () {
