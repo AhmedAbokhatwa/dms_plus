@@ -13,3 +13,24 @@
         2. Permission Type
 
 
+4-
+    Quotation Work flow Sate:
+
+        Draft
+        Pending Approval
+        Approved Sales Manager
+        Approved Sales Master Manager
+        Approved CEO
+        Rejected Sales Manager
+        Rejected Sales Master Manager
+        Rejected CEO
+        Cancelled
+
+5-
+   Quotation :(Draft)
+
+    CEO:
+        Draft → Pending Approval
+        DocStatus: 0
+        Allowed:
+
