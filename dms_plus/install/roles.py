@@ -32,6 +32,8 @@ def get_roles():
         "Logistic User",
         "Technician",
         "Technical Engineer",
+        "Senior Sales",
+        "Junior Sales",
     ]
 
     return roles

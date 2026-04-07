@@ -152,10 +152,10 @@ permission_query_conditions = {
 
 doc_events = {
     "Sales Order": {
-        "validate": "dms_plus.crm_permissions.permissions.validate_professional_service",
+        "validate": "dms_plus.permissions.validate_professional_service",
     },
     "Quotation": {
-        "validate": "dms_plus.crm_permissions.permissions.validate_professional_service",
+        "validate": "dms_plus.permissions.validate_professional_service",
     }
 }
 # has_permission = {
