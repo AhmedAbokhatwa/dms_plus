@@ -46,26 +46,13 @@ def get_columns() -> list[dict]:
             "width": 250
         },
         {
-            "label": _("End User"),
-            "fieldname": "enduser",
-            "fieldtype": "Link",
-            "options": "User",
-            "width": 180
-        },
-        {
             "label": _("Price List"),
             "fieldname": "price_list",
             "fieldtype": "Link",
             "options": "Price List",
             "width": 180
         },
-        {
-            "label": _("Account Manager"),
-            "fieldname": "account_manager",
-            "fieldtype": "Link",
-            "options": "Employee",
-            "width": 180
-        },
+
         {
             "label": _("Item"),
             "fieldname": "item_code",
@@ -118,7 +105,7 @@ def get_columns() -> list[dict]:
             "width": 150
         },
           {
-            "label": _("Quotation Net Total"),
+            "label": _("Quotation (Net Total)"),
             "fieldname": "quotation_net_total",
             "fieldtype": "Currency",
             "width": 150
@@ -131,7 +118,7 @@ def get_columns() -> list[dict]:
             "width": 120
         },
         {
-            "label": _("Sales Order Qty"),
+            "label": _("Sales Order (Qty)"),
             "fieldname": "ordered_qty",
             "fieldtype": "Int",
             "width": 150
@@ -190,9 +177,7 @@ def get_quotation_data(filters: dict | None = None) -> list:
             q.transaction_date,
             q.name as quotation_name,
             q.customer_name,
-            q.enduser,
             q.selling_price_list as price_list,
-            q.account_manager,
             qi.item_code,
             qi.item_group,
             qi.qty,
@@ -258,10 +243,3 @@ def get_quotation_data(filters: dict | None = None) -> list:
         frappe.msgprint(f"Error fetching data: {str(e)}")
         return []
 
-
-# Test Case
-# SAL-QTN-2025-00026 have twot items Item-0001 qty 10 and Item-0002 qty 5
-# create three sales order
-#  first sales order Item-0001 qty 2 Done
-#  second sales order Item-0001 qty 3 not Done
-#  third sales order Item-0002 qty 3 not Done
