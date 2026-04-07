@@ -46,26 +46,13 @@ def get_columns() -> list[dict]:
             "width": 250
         },
         {
-            "label": _("End User"),
-            "fieldname": "enduser",
-            "fieldtype": "Link",
-            "options": "User",
-            "width": 180
-        },
-        {
             "label": _("Price List"),
             "fieldname": "price_list",
             "fieldtype": "Link",
             "options": "Price List",
             "width": 180
         },
-        {
-            "label": _("Account Manager"),
-            "fieldname": "account_manager",
-            "fieldtype": "Link",
-            "options": "Employee",
-            "width": 180
-        },
+
         {
             "label": _("Item"),
             "fieldname": "item_code",
@@ -190,9 +177,7 @@ def get_quotation_data(filters: dict | None = None) -> list:
             q.transaction_date,
             q.name as quotation_name,
             q.customer_name,
-            q.enduser,
             q.selling_price_list as price_list,
-            q.account_manager,
             qi.item_code,
             qi.item_group,
             qi.qty,
