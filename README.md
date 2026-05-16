@@ -1,3 +1,4 @@
+<meta name="google-site-verification" content="RUsyHU69v4Eiv-R6qvviF6SQOS9BwLRlQGxbe1E9U-w" />
 <div align="center">
   <img src="dms.png" alt="DMS Plus Logo" width="200">
 
