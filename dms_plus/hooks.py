@@ -1,11 +1,11 @@
 app_name = "dms_plus"
-app_title = "dms_plus"
+app_title = "DMS Plus"
 app_publisher = "dms developers"
 app_description = "dms"
 app_email = "dms@gmail.com"
 app_license = "mit"
 source_link = "https://github.com/AhmedAbokhatwa/dms_plus.git"
-app_logo_url = "/assets/dms_plus/images/dms_logo.png"
+app_home = "/app/dms_plus"
 
 
 # Apps
@@ -16,11 +16,11 @@ app_logo_url = "/assets/dms_plus/images/dms_logo.png"
 # Each item in the list will be shown as an app in the apps page
 add_to_apps_screen = [
 	{
-		"name": "dms_plus",
+		"name": app_name,
 		"logo": "/assets/dms_plus/images/dms_fav_icon_app.png",
-		"title": "DMS Plus",
-		"route": "/app/home",
-		# "has_permission": "dms_plus.api.permission.has_app_permission"
+		"title": app_title,
+		"route": "dms-plus",
+# 		# "has_permission": "dms_plus.api.permission.has_app_permission"
 	}
 ]
 

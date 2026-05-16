@@ -1,0 +1,77 @@
+{
+ "app": "dms_plus",
+ "charts": [
+  {
+   "chart_name": "Quotation Pipeline by Workflow State (All Pending Approval)",
+   "label": "Quotation Pipeline by Workflow State (All Pending Approval)"
+  },
+  {
+   "chart_name": "Quotation Pipeline by Workflow State (All Rejected)",
+   "label": "Quotation Pipeline by Workflow State (All Rejected)"
+  },
+  {
+   "chart_name": "Quotation Pipeline by Workflow State (All Approved)",
+   "label": "Quotation Pipeline by Workflow State (All Approved)"
+  }
+ ],
+ "content": "[{\"id\":\"Qm4MoEdeYQ\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Welcome to the DMS workspace</span>\",\"col\":12}},{\"id\":\"qaJMEJvX-S\",\"type\":\"paragraph\",\"data\":{\"text\":\"Click on \\n\\t\\t\\t\\n\\t\\t\\t\\n\\t\\t to edit\",\"col\":12}},{\"id\":\"Bk7yAmqkeA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Pending Approval (Quotation)\",\"col\":4}},{\"id\":\"gISC74GYbA\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Draft (Quotation)\",\"col\":4}},{\"id\":\"BbKt97deLR\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Cancelled (Quotation)\",\"col\":4}},{\"id\":\"7wlr0XDe4M\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"iAv92X6tw8\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Quotation Pipeline by Workflow State (All Rejected)\",\"col\":6}},{\"id\":\"ZscrZUsfwM\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Quotation Pipeline by Workflow State (All Pending Approval)\",\"col\":6}},{\"id\":\"INi4Z34Dtv\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Quotation Pipeline by Workflow State (All Approved)\",\"col\":12}},{\"id\":\"5IPUbQcD6W\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+ "creation": "2026-04-14 20:25:33.408825",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "alarm-clock-minus",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "DMS",
+ "link_type": "DocType",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Quotation Follow-up",
+   "link_count": 0,
+   "link_to": "Quotation Follow-up",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-15 02:04:54.339613",
+ "modified_by": "Administrator",
+ "module": "dms_plus",
+ "name": "DMS",
+ "number_cards": [
+  {
+   "label": "Pending Approval (Quotation)",
+   "number_card_name": "Pending Approval"
+  },
+  {
+   "label": "Draft (Quotation)",
+   "number_card_name": "Draft Quotation"
+  },
+  {
+   "label": "Cancelled (Quotation)",
+   "number_card_name": "Cancelled Quotation"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 1.0,
+ "shortcuts": [],
+ "title": "DMS",
+ "type": "Workspace"
+}
